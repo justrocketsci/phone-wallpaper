@@ -296,12 +296,12 @@ export async function loadWallpaperConfig(file: File): Promise<void> {
     throw new Error('Invalid config file')
   }
 
-  const { setDevice, setGradient, setTypography, addQRBlock } =
+  const { setDevice, setGradient, addQRBlock } =
     useWallpaperStore.getState()
 
   setDevice(config.device)
   setGradient(config.gradient)
-  setTypography(config.typography)
+  // Typography is now fixed and not user-editable
 
   // Clear existing QR blocks and add from config
   const store = useWallpaperStore.getState()

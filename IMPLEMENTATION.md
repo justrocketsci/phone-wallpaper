@@ -33,27 +33,12 @@ A fully functional Next.js web application that creates custom QR code wallpaper
 - Real-time QR code generation with high error correction
 - White rounded background with shadow for better scannability
 
-### 4. Typography System
-- **5 wallpaper-optimized fonts**:
-  - Inter (clean, modern sans-serif)
-  - Manrope (geometric sans-serif)
-  - Outfit (rounded, friendly)
-  - Sora (tech-inspired)
-  - JetBrains Mono (developer-friendly monospace)
-- **4 preset combinations** for quick styling
-- Custom controls:
-  - Font size (10-24px)
-  - Font weight (400-800)
-  - Letter spacing (0-3px)
-  - Text transform (none/uppercase/lowercase)
-  - Underline toggle
-
-### 5. Brand Icons
+### 4. Brand Icons
 - **7 built-in SVG icons**: YouTube, Instagram, Twitter/X, LinkedIn, TikTok, GitHub, Website
 - Icons placed next to QR labels with proper spacing
 - Color-matched to QR code color
 
-### 6. Export Functionality
+### 5. Export Functionality
 - **PNG export** at exact device resolution
 - High-quality canvas rendering with:
   - Gradient backgrounds (linear/radial)
@@ -63,7 +48,7 @@ A fully functional Next.js web application that creates custom QR code wallpaper
 - **Save/Load configuration** as JSON for later editing
 - Automatic filename with device model and timestamp
 
-### 7. Validation & Safety
+### 6. Validation & Safety
 - URL validation
 - QR code text length validation (max 2953 characters)
 - Safe area boundary checking
@@ -97,8 +82,7 @@ src/
 │   │   ├── Sidebar.tsx         # Main sidebar with tabs
 │   │   ├── StepPhone.tsx       # Device selection
 │   │   ├── StepBackground.tsx  # Gradient picker
-│   │   ├── StepQR.tsx          # QR configuration
-│   │   └── StepTypography.tsx  # Font settings
+│   │   └── StepQR.tsx          # QR configuration
 │   ├── ExportBar.tsx           # Export controls
 │   └── BrandIcon.tsx           # Icon component
 ├── lib/
@@ -123,7 +107,7 @@ src/
   - Device selection
   - Gradient configuration
   - QR blocks array (max 2)
-  - Typography settings
+  - Typography settings (fixed defaults, not user-editable)
   - Actions for add/update/remove operations
 
 ### QR Generation
@@ -150,8 +134,7 @@ src/
 1. **Select Device** → Choose from 12 popular phones
 2. **Pick Background** → Select from 14 gradient presets
 3. **Add QR Codes** → Input URLs, labels, customize colors/icons (max 2)
-4. **Style Typography** → Choose font preset or customize
-5. **Export** → Download PNG at device resolution
+4. **Export** → Download PNG at device resolution
 
 ## Additional Features
 

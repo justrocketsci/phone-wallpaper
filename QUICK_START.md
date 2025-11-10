@@ -31,18 +31,7 @@ npm run dev
    - Icon type (YouTube, Instagram, Website, etc.)
    - QR code color
 
-### Step 4: Customize Typography
-1. Click on the "4. Typography" tab
-2. Choose a preset (Modern & Clean, Bold Statement, etc.) OR
-3. Customize manually:
-   - Font family
-   - Font size
-   - Font weight
-   - Letter spacing
-   - Text transform
-   - Underline
-
-### Step 5: Export Your Wallpaper
+### Step 4: Export Your Wallpaper
 1. Click "Download Wallpaper" to export as PNG
 2. The file will download at your device's exact resolution
 3. Set it as your lock screen wallpaper!

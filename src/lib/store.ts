@@ -75,7 +75,6 @@ interface WallpaperState {
   addQRBlock: (block: QRBlock) => void
   updateQRBlock: (id: string, updates: Partial<QRBlock>) => void
   removeQRBlock: (id: string) => void
-  setTypography: (typography: Partial<Typography>) => void
 }
 
 export const useWallpaperStore = create<WallpaperState>((set) => ({
@@ -102,9 +101,6 @@ export const useWallpaperStore = create<WallpaperState>((set) => ({
   })),
   removeQRBlock: (id) => set((state) => ({
     qrBlocks: state.qrBlocks.filter((block) => block.id !== id),
-  })),
-  setTypography: (typography) => set((state) => ({
-    typography: { ...state.typography, ...typography },
   })),
 }))
 

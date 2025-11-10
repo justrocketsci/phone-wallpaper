@@ -4,14 +4,12 @@ import { useState } from 'react'
 import { StepPhone } from './StepPhone'
 import { StepBackground } from './StepBackground'
 import { StepQR } from './StepQR'
-import { StepTypography } from './StepTypography'
 import { clsx } from 'clsx'
 
 const steps = [
   { id: 1, title: 'Phone', component: StepPhone },
   { id: 2, title: 'Background', component: StepBackground },
   { id: 3, title: 'QR Codes', component: StepQR },
-  { id: 4, title: 'Typography', component: StepTypography },
 ]
 
 export function Sidebar() {
