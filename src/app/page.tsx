@@ -1,10 +1,14 @@
-import WallpaperCreator from '@/components/WallpaperCreator'
+import { Navigation } from '@/components/LandingPage/Navigation'
+import { Hero } from '@/components/LandingPage/Hero'
+import { Footer } from '@/components/LandingPage/Footer'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <WallpaperCreator />
-    </main>
+    <div className="min-h-screen">
+      <Navigation />
+      <Hero />
+      <Footer />
+    </div>
   )
 }
 

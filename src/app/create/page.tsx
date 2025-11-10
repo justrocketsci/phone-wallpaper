@@ -1,0 +1,10 @@
+import WallpaperCreator from '@/components/WallpaperCreator'
+
+export default function CreatePage() {
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <WallpaperCreator />
+    </main>
+  )
+}
+

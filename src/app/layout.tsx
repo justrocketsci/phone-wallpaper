@@ -28,8 +28,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'QR Wallpaper Creator',
-  description: 'Create beautiful QR code wallpapers for your phone',
+  title: 'QR Canvas - Create Beautiful QR Code Wallpapers',
+  description: 'Create stunning QR code wallpapers that drive engagement and boost your call-to-action',
 }
 
 export default function RootLayout({
