@@ -120,7 +120,9 @@ export function WallpaperCanvas({
       {qrBlocks.map((block) => {
         const qrImage = qrImages[block.id]
         const xPos = (width * block.x) / 100
-        const yPos = (height * block.y) / 100
+        // Center single QR code vertically, use original position for multiple QRs
+        const yPercent = qrBlocks.length === 1 ? 50 : block.y
+        const yPos = (height * yPercent) / 100
         const iconSize = Math.max(16, Math.round(typography.fontSize * 1.25))
         const gapSize = Math.max(6, Math.round(typography.fontSize * 0.35))
 
@@ -132,6 +134,7 @@ export function WallpaperCanvas({
               left: `${xPos}px`,
               top: `${yPos}px`,
               transform: 'translate(-50%, -50%)',
+              transition: 'top 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
           >
             {/* QR Code */}
