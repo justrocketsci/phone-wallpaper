@@ -2,6 +2,7 @@ import QRCode from 'qrcode'
 
 export interface QROptions {
   errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H'
+  version?: number // QR version 1-40 (higher = more capacity, forces same grid size)
   color?: {
     dark?: string
     light?: string
@@ -18,7 +19,8 @@ export async function generateQRSVG(
   options: QROptions = {}
 ): Promise<string> {
   const {
-    errorCorrectionLevel = 'H',
+    errorCorrectionLevel = 'M',
+    version = 5, // Force version 5 (37x37 grid) for visual consistency
     color = { dark: '#000000', light: '#ffffff' },
     width = 200,
     margin = 1,
@@ -28,6 +30,7 @@ export async function generateQRSVG(
     const svg = await QRCode.toString(text, {
       type: 'svg',
       errorCorrectionLevel,
+      version,
       color,
       width,
       margin,
@@ -47,7 +50,8 @@ export async function generateQRDataURL(
   options: QROptions = {}
 ): Promise<string> {
   const {
-    errorCorrectionLevel = 'H',
+    errorCorrectionLevel = 'M',
+    version = 5, // Force version 5 (37x37 grid) for visual consistency
     color = { dark: '#000000', light: '#ffffff' },
     width = 200,
     margin = 1,
@@ -56,6 +60,7 @@ export async function generateQRDataURL(
   try {
     const dataURL = await QRCode.toDataURL(text, {
       errorCorrectionLevel,
+      version,
       color,
       width,
       margin,
