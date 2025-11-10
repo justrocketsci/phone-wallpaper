@@ -43,7 +43,6 @@ export const templates: Template[] = [
       fontWeight: 600,
       letterSpacing: 0,
       textTransform: 'none',
-      underline: true,
     },
   },
   {
@@ -79,7 +78,6 @@ export const templates: Template[] = [
       fontWeight: 700,
       letterSpacing: 0.5,
       textTransform: 'lowercase',
-      underline: false,
     },
   },
   {
@@ -115,7 +113,6 @@ export const templates: Template[] = [
       fontWeight: 600,
       letterSpacing: 0.3,
       textTransform: 'none',
-      underline: true,
     },
   },
 ]

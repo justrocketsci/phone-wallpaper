@@ -36,10 +36,11 @@ export function WallpaperCanvas({
       
       for (const block of qrBlocks) {
         try {
+          // Use fixed high resolution for all QR codes (1024px ensures crisp quality)
           const dataUrl = await generateQRDataURL(block.url, {
             errorCorrectionLevel: block.errorCorrection,
             color: { dark: block.color, light: '#00000000' },
-            width: block.size,
+            width: 1024,
             margin: 1,
           })
           newImages[block.id] = dataUrl
@@ -120,6 +121,8 @@ export function WallpaperCanvas({
         const qrImage = qrImages[block.id]
         const xPos = (width * block.x) / 100
         const yPos = (height * block.y) / 100
+        const iconSize = Math.max(16, Math.round(typography.fontSize * 1.25))
+        const gapSize = Math.max(6, Math.round(typography.fontSize * 0.35))
 
         return (
           <div
@@ -134,22 +137,32 @@ export function WallpaperCanvas({
             {/* QR Code */}
             {qrImage && (
               <div
-                className="bg-white rounded-2xl p-4 shadow-lg mb-3"
+                className="bg-white rounded-2xl p-4 shadow-lg"
                 style={{ width: `${block.size}px`, height: `${block.size}px` }}
               >
                 <img src={qrImage} alt={block.label} className="w-full h-full" />
               </div>
             )}
 
-            {/* Label */}
-            <div className="flex items-center space-x-2">
+            {/* Label with pill backdrop */}
+            <div 
+              className="flex items-center backdrop-blur-sm rounded-full shadow-lg"
+              style={{ 
+                gap: `${gapSize}px`,
+                padding: `${Math.round(typography.fontSize * 0.35)}px ${Math.round(typography.fontSize * 0.7)}px`,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                marginTop: `${Math.round(typography.fontSize * 0.75)}px`
+              }}
+            >
               {block.iconType && block.iconType !== 'custom' && (
                 <svg
-                  width="24"
-                  height="24"
+                  width={iconSize}
+                  height={iconSize}
                   viewBox="0 0 24 24"
                   fill={block.color}
-                  style={{ flexShrink: 0 }}
+                  style={{ 
+                    flexShrink: 0
+                  }}
                 >
                   {block.iconType === 'youtube' && (
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -185,9 +198,8 @@ export function WallpaperCanvas({
                   fontWeight: typography.fontWeight,
                   letterSpacing: `${typography.letterSpacing}px`,
                   textTransform: getTextTransform(),
-                  textDecoration: typography.underline ? 'underline' : 'none',
                   color: block.color,
-                  textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {block.label}

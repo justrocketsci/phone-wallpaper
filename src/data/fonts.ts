@@ -71,7 +71,6 @@ export const fontPresets = [
     size: 14,
     letterSpacing: 0.5,
     transform: 'none' as const,
-    underline: true,
   },
   {
     id: 'bold-statement',
@@ -81,7 +80,6 @@ export const fontPresets = [
     size: 16,
     letterSpacing: 1,
     transform: 'uppercase' as const,
-    underline: true,
   },
   {
     id: 'tech-minimal',
@@ -91,7 +89,6 @@ export const fontPresets = [
     size: 12,
     letterSpacing: 0,
     transform: 'none' as const,
-    underline: false,
   },
   {
     id: 'friendly-rounded',
@@ -101,7 +98,6 @@ export const fontPresets = [
     size: 15,
     letterSpacing: 0.3,
     transform: 'lowercase' as const,
-    underline: false,
   },
 ]
 

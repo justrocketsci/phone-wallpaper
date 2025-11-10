@@ -63,7 +63,6 @@ export interface Typography {
   fontWeight: number
   letterSpacing: number
   textTransform: 'none' | 'uppercase' | 'lowercase'
-  underline: boolean
 }
 
 interface WallpaperState {
@@ -85,11 +84,10 @@ export const useWallpaperStore = create<WallpaperState>((set) => ({
   qrBlocks: [],
   typography: {
     fontFamily: 'inter',
-    fontSize: 16,
+    fontSize: 56,
     fontWeight: 600,
     letterSpacing: 0,
     textTransform: 'none',
-    underline: true,
   },
   setDevice: (device) => set({ device }),
   setGradient: (gradient) => set({ gradient }),

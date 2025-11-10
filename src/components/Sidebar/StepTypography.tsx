@@ -22,7 +22,6 @@ export function StepTypography() {
                   fontWeight: preset.weight,
                   letterSpacing: preset.letterSpacing,
                   textTransform: preset.transform,
-                  underline: preset.underline,
                 })
               }
               className="w-full p-3 text-left border-2 border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-600 rounded-lg transition-colors"
@@ -61,8 +60,8 @@ export function StepTypography() {
             </label>
             <input
               type="range"
-              min="10"
-              max="24"
+              min="12"
+              max="120"
               value={typography.fontSize}
               onChange={(e) => setTypography({ fontSize: parseInt(e.target.value) })}
               className="w-full"
@@ -116,19 +115,6 @@ export function StepTypography() {
               <option value="uppercase">Uppercase</option>
               <option value="lowercase">Lowercase</option>
             </select>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="underline"
-              checked={typography.underline}
-              onChange={(e) => setTypography({ underline: e.target.checked })}
-              className="mr-2"
-            />
-            <label htmlFor="underline" className="text-sm">
-              Underline
-            </label>
           </div>
         </div>
       </div>
