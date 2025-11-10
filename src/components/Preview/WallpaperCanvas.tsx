@@ -216,7 +216,7 @@ export function WallpaperCanvas({
             {/* Placeholder QR box matching actual size */}
             <div
               className="bg-white/80 rounded-2xl p-4 shadow-lg mb-3"
-              style={{ width: '450px', height: '450px' }}
+              style={{ width: '563px', height: '563px' }}
               aria-hidden="true"
             />
             

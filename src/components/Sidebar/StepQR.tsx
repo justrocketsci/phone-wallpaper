@@ -20,7 +20,7 @@ export function StepQR() {
       iconType: 'website',
       x: 50,
       y: qrBlocks.length === 0 ? 40 : 65,
-      size: 450,
+      size: 563,
       color: '#000000',
       errorCorrection: 'H',
     }
