@@ -15,6 +15,19 @@
       "width": 371,
       "height": 37,
       "topOffset": 11
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.5455
+      }
     }
   },
   {
@@ -33,6 +46,19 @@
       "width": 371,
       "height": 37,
       "topOffset": 11
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.5605
+      }
     }
   },
   {
@@ -51,6 +77,19 @@
       "width": 371,
       "height": 37,
       "topOffset": 11
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.4961
+      }
     }
   },
   {
@@ -69,6 +108,19 @@
       "width": 371,
       "height": 37,
       "topOffset": 11
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.5801
+      }
     }
   },
   {
@@ -87,6 +139,19 @@
       "width": 371,
       "height": 37,
       "topOffset": 11
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.5801
+      }
     }
   },
   {
@@ -105,6 +170,19 @@
       "width": 371,
       "height": 37,
       "topOffset": 11
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.4961
+      }
     }
   },
   {
@@ -123,6 +201,19 @@
       "width": 371,
       "height": 37,
       "topOffset": 11
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.5801
+      }
     }
   },
   {
@@ -140,6 +231,19 @@
     "notch": {
       "width": 210,
       "height": 30
+    },
+    "systemUI": {
+      "statusBar": {
+        "topPercent": 2.9
+      },
+      "lockScreenClock": {
+        "dateTopPercent": 12.2,
+        "timeTopPercent": 18.1
+      },
+      "bottomWidgets": {
+        "topPercent": 91.8,
+        "iconSizePercent": 4.4393
+      }
     }
   },
   {

@@ -16,6 +16,24 @@ export interface Device {
     width: number
     height: number
   }
+  dynamicIsland?: {
+    width: number
+    height: number
+    topOffset: number
+  }
+  systemUI?: {
+    statusBar: {
+      topPercent: number     // % from top (0.029 = 2.9%)
+    }
+    lockScreenClock: {
+      dateTopPercent: number // % from top (0.122 = 12.2%)
+      timeTopPercent: number // % from top (0.181 = 18.1%)
+    }
+    bottomWidgets: {
+      topPercent: number     // % from top (0.918 = 91.8%)
+      iconSizePercent: number // % of device width
+    }
+  }
 }
 
 export interface Gradient {

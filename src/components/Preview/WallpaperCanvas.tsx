@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { generateQRDataURL } from '@/lib/qr'
 import { gradients } from '@/data/gradients'
 import { fonts } from '@/data/fonts'
+import { IPhoneSystemUI } from './IPhoneSystemUI'
 
 interface WallpaperCanvasProps {
   width: number
@@ -219,6 +220,11 @@ export function WallpaperCanvas({
             </p>
           </div>
         </div>
+      )}
+
+      {/* iPhone System UI Overlay */}
+      {device && device.brand === 'Apple' && device.systemUI && (
+        <IPhoneSystemUI device={device} width={width} height={height} />
       )}
     </div>
   )

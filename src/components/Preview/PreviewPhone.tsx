@@ -3,9 +3,27 @@
 import { useWallpaperStore } from '@/lib/store'
 import { WallpaperCanvas } from './WallpaperCanvas'
 import { ExportBar } from '../ExportBar'
+import { useRef, useEffect, useState } from 'react'
 
 export function PreviewPhone() {
   const { device } = useWallpaperStore()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [dimensions, setDimensions] = useState({ width: 276, height: 600 })
+
+  useEffect(() => {
+    if (!containerRef.current || !device) return
+
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        setDimensions({ width: rect.width, height: rect.height })
+      }
+    }
+
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    return () => window.removeEventListener('resize', updateDimensions)
+  }, [device])
 
   if (!device) {
     return (
@@ -21,11 +39,6 @@ export function PreviewPhone() {
     )
   }
 
-  const aspectRatio = device.width / device.height
-  const maxPreviewHeight = 600
-  const previewHeight = maxPreviewHeight
-  const previewWidth = previewHeight * aspectRatio
-
   return (
     <div className="flex flex-col items-center justify-center h-full space-y-6 p-8">
       <div className="text-center">
@@ -36,17 +49,21 @@ export function PreviewPhone() {
       </div>
 
       <div
-        className="relative bg-slate-900 rounded-3xl shadow-2xl overflow-hidden"
+        ref={containerRef}
+        className="relative bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex-shrink-0"
         style={{
-          width: `${previewWidth}px`,
-          height: `${previewHeight}px`,
+          aspectRatio: `${device.width} / ${device.height}`,
+          maxHeight: '600px',
+          width: 'auto',
+          height: 'auto',
+          maxWidth: '100%',
         }}
       >
         <WallpaperCanvas
           width={device.width}
           height={device.height}
-          displayWidth={previewWidth}
-          displayHeight={previewHeight}
+          displayWidth={dimensions.width}
+          displayHeight={dimensions.height}
         />
       </div>
 
