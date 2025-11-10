@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PhoneShowcase } from './PhoneShowcase'
 
 export function Hero() {
   return (
@@ -9,31 +10,39 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32">
-        <div className="text-center">
-          {/* Headline */}
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight">
-            The BEST Call to Action
-            <br />
-            <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-orange-500 bg-clip-text text-transparent">
-              for your product
-            </span>
-          </h1>
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 py-24 md:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 xl:gap-24 items-center">
+          {/* Left Column - Hero Text */}
+          <div className="text-center lg:text-left">
+            {/* Headline */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight">
+              The BEST Call to Action
+              <br />
+              <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-orange-500 bg-clip-text text-transparent">
+                for your product
+              </span>
+            </h1>
 
-          {/* Sub-headline */}
-          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Create stunning QR code wallpapers that turn every phone unlock into an opportunity. 
-            Drive traffic, boost engagement, and make your call-to-action unforgettable.
-          </p>
+            {/* Sub-headline */}
+            <p className="text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 mb-12 leading-relaxed">
+              Create stunning QR code wallpapers that turn every phone unlock into an opportunity. 
+              Drive traffic, boost engagement, and make your call-to-action unforgettable.
+            </p>
 
-          {/* CTA Button */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
-              href="/create"
-              className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-semibold text-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              Get Started
-            </Link>
+            {/* CTA Button */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
+              <Link
+                href="/create"
+                className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-semibold text-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                Get Started
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column - iPhone Showcase */}
+          <div className="relative flex items-center justify-center lg:justify-end">
+            <PhoneShowcase />
           </div>
         </div>
       </div>
