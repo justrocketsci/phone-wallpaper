@@ -11,9 +11,9 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 py-24 md:py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 xl:gap-24 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 lg:gap-8 xl:gap-12 items-center lg:items-start">
           {/* Left Column - Hero Text */}
-          <div className="text-center lg:text-left">
+          <div className="text-center lg:text-left lg:max-w-none">
             {/* Headline */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight">
               The BEST Call to Action
@@ -41,7 +41,7 @@ export function Hero() {
           </div>
 
           {/* Right Column - iPhone Showcase */}
-          <div className="relative flex items-center justify-center lg:justify-end">
+          <div className="relative flex items-center lg:items-start justify-center lg:justify-end">
             <PhoneShowcase />
           </div>
         </div>

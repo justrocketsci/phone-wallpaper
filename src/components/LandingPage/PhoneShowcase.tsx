@@ -70,7 +70,7 @@ export function PhoneShowcase() {
   }
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center z-10">
+    <div className="relative w-full h-full flex items-center lg:items-start justify-center z-10">
       {/* iPhone Frame Container */}
       <div className="relative w-full max-w-[220px] md:max-w-[260px] lg:max-w-[280px] drop-shadow-2xl">
         {/* iPhone Frame Image */}
@@ -80,12 +80,12 @@ export function PhoneShowcase() {
             className="absolute overflow-hidden transition-opacity duration-300 z-0"
             style={{ 
               opacity: isTransitioning ? 0.7 : 1,
-              // Precise positioning to stay within the screen area, leaving the black bezel fully visible
-              top: '3.5%',
-              left: '4.5%',
-              width: '91%',
-              height: '93%',
-              borderRadius: '36px', // Match the actual screen corner radius
+              // Fill the screen area edge to edge
+              top: '1.4%',
+              left: '2.1%',
+              width: '95.8%',
+              height: '97.2%',
+              borderRadius: '52px', // Match the actual screen corner radius
             }}
           >
             {/* Gradient Background */}
