@@ -123,15 +123,15 @@ export function PhoneShowcase() {
 
                   {/* Label */}
                   <div 
-                    className="mt-1.5 px-2 py-1 backdrop-blur-sm rounded-full shadow-md flex items-center gap-1"
+                    className="mt-2 px-2.5 py-1 backdrop-blur-sm rounded-full shadow-md flex items-center gap-1"
                     style={{ 
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                     }}
                   >
                     {block.iconType && block.iconType !== 'custom' && (
                       <svg
-                        width={12}
-                        height={12}
+                        width={14}
+                        height={14}
                         viewBox="0 0 24 24"
                         fill={block.color}
                         className="flex-shrink-0"
@@ -164,7 +164,7 @@ export function PhoneShowcase() {
                       </svg>
                     )}
                     <span
-                      className="text-[10px] font-semibold whitespace-nowrap"
+                      className="text-[11px] font-semibold whitespace-nowrap"
                       style={{ color: block.color }}
                     >
                       {block.label}
