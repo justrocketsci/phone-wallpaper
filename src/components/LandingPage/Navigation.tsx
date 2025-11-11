@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 
 export function Navigation() {
   return (
@@ -22,14 +23,31 @@ export function Navigation() {
             </Link>
           </div>
 
-          {/* CTA Button */}
-          <div>
-            <Link 
-              href="/create"
-              className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors duration-200"
-            >
-              Get Started
-            </Link>
+          {/* Auth Buttons */}
+          <div className="flex items-center gap-4">
+            <SignedOut>
+              <Link 
+                href="/sign-in"
+                className="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
+              >
+                Sign In
+              </Link>
+              <Link 
+                href="/sign-up"
+                className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors duration-200"
+              >
+                Get Started
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link 
+                href="/create"
+                className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors duration-200"
+              >
+                Create
+              </Link>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
           </div>
         </div>
       </div>

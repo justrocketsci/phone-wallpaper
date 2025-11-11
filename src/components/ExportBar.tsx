@@ -3,15 +3,24 @@
 import { useWallpaperStore } from '@/lib/store'
 import { exportWallpaperAsPNG, saveWallpaperConfig, loadWallpaperConfig } from '@/lib/export'
 import { useState, useRef } from 'react'
+import { useSubscription } from '@/hooks/useSubscription'
+import { useRouter } from 'next/navigation'
 
 export function ExportBar() {
   const { device, gradient, qrBlocks } = useWallpaperStore()
   const [isExporting, setIsExporting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { isActive, loading } = useSubscription()
+  const router = useRouter()
 
   const handleExport = async () => {
     if (!device || !gradient || qrBlocks.length === 0) {
       alert('Please complete your wallpaper design before exporting')
+      return
+    }
+
+    if (!isActive) {
+      router.push('/subscribe')
       return
     }
 
@@ -59,10 +68,10 @@ export function ExportBar() {
     <div className="flex items-center gap-3">
       <button
         onClick={handleExport}
-        disabled={!canExport || isExporting}
+        disabled={!canExport || isExporting || loading}
         className="px-8 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-lg font-medium transition-colors shadow-lg disabled:shadow-none disabled:cursor-not-allowed"
       >
-        {isExporting ? 'Exporting...' : 'Download Wallpaper'}
+        {loading ? 'Loading...' : isExporting ? 'Exporting...' : !isActive ? 'Subscribe to Export' : 'Download Wallpaper'}
       </button>
 
       <div className="flex gap-2">
@@ -95,6 +104,11 @@ export function ExportBar() {
       {!canExport && (
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Complete all steps to export
+        </p>
+      )}
+      {canExport && !loading && !isActive && (
+        <p className="text-sm text-amber-600 dark:text-amber-400">
+          Subscribe to unlock exports
         </p>
       )}
     </div>

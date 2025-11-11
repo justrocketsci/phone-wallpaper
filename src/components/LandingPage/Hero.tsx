@@ -32,10 +32,16 @@ export function Hero() {
             {/* CTA Button */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
               <Link
-                href="/create"
+                href="/sign-up"
                 className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-semibold text-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                Get Started
+                Start Creating
+              </Link>
+              <Link
+                href="/sign-in"
+                className="px-8 py-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 rounded-xl font-semibold text-lg hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-200"
+              >
+                Sign In
               </Link>
             </div>
           </div>
