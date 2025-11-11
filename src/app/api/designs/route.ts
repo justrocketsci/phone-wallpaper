@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { getUserSubscription } from '@/lib/subscription'
 
 /**
  * GET /api/designs
@@ -97,6 +98,27 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Name and settings are required' },
         { status: 400 }
+      )
+    }
+
+    // Check subscription status
+    const subscription = await getUserSubscription()
+    if (!subscription || !subscription.isActive) {
+      return NextResponse.json(
+        { error: 'Active subscription required to save designs' },
+        { status: 403 }
+      )
+    }
+
+    // Check design limit (10 designs max for subscribers)
+    const designCount = await prisma.design.count({
+      where: { userId: user.id },
+    })
+
+    if (designCount >= 10) {
+      return NextResponse.json(
+        { error: 'Design limit reached. You can save up to 10 designs. Delete a design to save a new one.' },
+        { status: 403 }
       )
     }
 

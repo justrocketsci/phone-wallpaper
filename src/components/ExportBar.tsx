@@ -1,26 +1,21 @@
 'use client'
 
 import { useWallpaperStore } from '@/lib/store'
-import { exportWallpaperAsPNG, saveWallpaperConfig, loadWallpaperConfig } from '@/lib/export'
-import { useState, useRef } from 'react'
-import { useSubscription } from '@/hooks/useSubscription'
-import { UpgradeModal } from './UpgradeModal'
+import { exportWallpaperAsPNG } from '@/lib/export'
+import { useState } from 'react'
+import Link from 'next/link'
 
-export function ExportBar() {
+interface ExportBarProps {
+  isSubscribed: boolean
+}
+
+export function ExportBar({ isSubscribed }: ExportBarProps) {
   const { device, gradient, qrBlocks } = useWallpaperStore()
   const [isExporting, setIsExporting] = useState(false)
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const { isActive, loading } = useSubscription()
 
   const handleExport = async () => {
     if (!device || !gradient || qrBlocks.length === 0) {
       alert('Please complete your wallpaper design before exporting')
-      return
-    }
-
-    if (!isActive) {
-      setShowUpgradeModal(true)
       return
     }
 
@@ -35,87 +30,47 @@ export function ExportBar() {
     }
   }
 
-  const handleSaveConfig = () => {
-    try {
-      saveWallpaperConfig()
-    } catch (error) {
-      console.error('Save config failed:', error)
-      alert('Failed to save configuration.')
-    }
-  }
-
-  const handleLoadConfig = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    try {
-      await loadWallpaperConfig(file)
-      alert('Configuration loaded successfully!')
-    } catch (error) {
-      console.error('Load config failed:', error)
-      alert('Failed to load configuration. Please check the file.')
-    }
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-  }
-
   const canExport = device && gradient && qrBlocks.length > 0
 
   return (
-    <>
-      <div className="flex items-center gap-3">
+    <div className="flex items-center justify-center gap-3">
+      {!isSubscribed ? (
+        /* Non-Subscriber: Show Subscribe Button */
+        <Link
+          href="/subscribe"
+          className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          Subscribe to Export
+        </Link>
+      ) : (
+        /* Subscriber: Show Download Button */
         <button
           onClick={handleExport}
-          disabled={!canExport || isExporting || loading}
-          className="px-8 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-lg font-medium transition-colors shadow-lg disabled:shadow-none disabled:cursor-not-allowed"
+          disabled={!canExport || isExporting}
+          className="group px-8 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed flex items-center gap-2.5"
         >
-          {loading ? 'Loading...' : isExporting ? 'Exporting...' : !isActive ? 'Subscribe to Export' : 'Download Wallpaper'}
+          {isExporting ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Exporting...
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download PNG
+            </>
+          )}
         </button>
+      )}
 
-        <div className="flex gap-2">
-          <button
-            onClick={handleSaveConfig}
-            disabled={!canExport}
-            className="px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:bg-slate-100 dark:disabled:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium transition-colors disabled:cursor-not-allowed"
-            title="Save configuration"
-          >
-            Save Config
-          </button>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            onChange={handleLoadConfig}
-            className="hidden"
-            id="load-config"
-          />
-          <label
-            htmlFor="load-config"
-            className="px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium transition-colors cursor-pointer inline-block"
-            title="Load configuration"
-          >
-            Load Config
-          </label>
-        </div>
-
-        {!canExport && (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Complete all steps to export
-          </p>
-        )}
-        {canExport && !loading && !isActive && (
-          <p className="text-sm text-amber-600 dark:text-amber-400">
-            Subscribe to unlock exports
-          </p>
-        )}
-      </div>
-
-      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
-    </>
+      {!canExport && (
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          Complete all steps first
+        </p>
+      )}
+    </div>
   )
 }
 

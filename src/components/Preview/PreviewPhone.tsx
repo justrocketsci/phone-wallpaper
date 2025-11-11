@@ -5,7 +5,11 @@ import { WallpaperCanvas } from './WallpaperCanvas'
 import { ExportBar } from '../ExportBar'
 import { useRef, useEffect, useState } from 'react'
 
-export function PreviewPhone() {
+interface PreviewPhoneProps {
+  isSubscribed: boolean
+}
+
+export function PreviewPhone({ isSubscribed }: PreviewPhoneProps) {
   const { device } = useWallpaperStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 276, height: 600 })
@@ -67,7 +71,7 @@ export function PreviewPhone() {
         />
       </div>
 
-      <ExportBar />
+      <ExportBar isSubscribed={isSubscribed} />
     </div>
   )
 }

@@ -6,7 +6,7 @@ import { getUserSubscription } from '@/lib/subscription'
 export default async function CreatePage({
   searchParams,
 }: {
-  searchParams: { template?: string; design?: string }
+  searchParams: Promise<{ template?: string; design?: string }>
 }) {
   const { userId } = await auth()
 
@@ -15,12 +15,13 @@ export default async function CreatePage({
   }
 
   const subscription = await getUserSubscription()
+  const params = await searchParams
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <WallpaperCreator
-        templateId={searchParams.template}
-        designId={searchParams.design}
+        templateId={params.template}
+        designId={params.design}
         isSubscribed={subscription?.isActive || false}
       />
     </main>

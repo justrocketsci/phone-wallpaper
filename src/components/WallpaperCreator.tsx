@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { PreviewPhone } from './Preview/PreviewPhone'
 import { Sidebar } from './Sidebar/Sidebar'
+import { UpgradeModal } from './UpgradeModal'
+import { ActionMenu } from './ActionMenu'
 import { useWallpaperStore } from '@/lib/store'
 import {
   loadDesign,
@@ -13,6 +15,7 @@ import {
   generateThumbnail,
   getTemplateSettings,
 } from '@/lib/design'
+import { exportWallpaperAsPNG } from '@/lib/export'
 import { templates } from '@/data/templates'
 import { gradients } from '@/data/gradients'
 import devices from '@/data/devices.json'
@@ -37,6 +40,9 @@ export default function WallpaperCreator({
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(!!designId || !!templateId)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>(undefined)
+  const [designCount, setDesignCount] = useState<number | null>(null)
 
   const {
     loadFromDesign,
@@ -46,6 +52,23 @@ export default function WallpaperCreator({
     setGradient,
     addQRBlock,
   } = useWallpaperStore()
+
+  // Fetch design count for subscribed users
+  useEffect(() => {
+    const fetchDesignCount = async () => {
+      if (!isSubscribed) return
+
+      try {
+        const response = await fetch('/api/designs')
+        const data = await response.json()
+        setDesignCount(data.designs?.length || 0)
+      } catch (error) {
+        console.error('Failed to fetch design count:', error)
+      }
+    }
+
+    fetchDesignCount()
+  }, [isSubscribed, currentDesignId]) // Refetch when a new design is saved
 
   // Load design or template on mount
   useEffect(() => {
@@ -132,9 +155,11 @@ export default function WallpaperCreator({
       }
 
       setLastSaved(new Date())
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save design:', error)
-      setSaveError('Failed to save')
+      // Extract error message from API response
+      const errorMessage = error?.message || 'Failed to save'
+      setSaveError(errorMessage)
     } finally {
       setIsSaving(false)
     }
@@ -148,11 +173,42 @@ export default function WallpaperCreator({
 
   // Manual save handler
   const handleSave = () => {
+    // Show upgrade modal if not subscribed
+    if (!isSubscribed) {
+      setUpgradeFeature('Save to Account')
+      setShowUpgradeModal(true)
+      return
+    }
     performSave()
+  }
+
+  // Handler for export PNG from ActionMenu
+  const handleExportPNG = async () => {
+    const state = getSerializableState()
+    if (!state.device || !state.gradient || state.qrBlocks.length === 0) {
+      setSaveError('Please complete your design first')
+      return
+    }
+
+    try {
+      await exportWallpaperAsPNG()
+    } catch (error) {
+      console.error('Export failed:', error)
+      setSaveError('Failed to export wallpaper')
+    }
+  }
+
+  // Handler for showing upgrade modal with feature context
+  const handleShowUpgrade = (feature: string) => {
+    setUpgradeFeature(feature)
+    setShowUpgradeModal(true)
   }
 
   // Auto-save every 30 seconds
   useEffect(() => {
+    // Don't auto-save for non-subscribers
+    if (!isSubscribed) return
+
     const interval = setInterval(() => {
       const state = getSerializableState()
       // Only auto-save if there's actual content
@@ -162,7 +218,7 @@ export default function WallpaperCreator({
     }, 30000) // 30 seconds
 
     return () => clearInterval(interval)
-  }, [performSave, getSerializableState])
+  }, [performSave, getSerializableState, isSubscribed])
 
   if (isLoading) {
     return (
@@ -208,28 +264,52 @@ export default function WallpaperCreator({
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Save status */}
-          <div className="text-sm text-slate-600 dark:text-slate-400">
-            {isSaving ? (
-              <span className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                Saving...
-              </span>
-            ) : saveError ? (
-              <span className="text-red-600 dark:text-red-400">{saveError}</span>
-            ) : lastSaved ? (
-              <span>Saved {lastSaved.toLocaleTimeString()}</span>
-            ) : null}
-          </div>
+          {!isSubscribed ? (
+            /* Non-Subscriber: Show ActionMenu dropdown */
+            <ActionMenu
+              isSubscribed={isSubscribed}
+              onSaveToAccount={handleSave}
+              onExportPNG={handleExportPNG}
+              canExport={!!(getSerializableState().device && getSerializableState().gradient && getSerializableState().qrBlocks.length > 0)}
+              onShowUpgrade={handleShowUpgrade}
+            />
+          ) : (
+            /* Subscriber: Show design count and auto-save status */
+            <>
+              {designCount !== null && (
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  {designCount}/10 designs
+                </div>
+              )}
 
-          {/* Manual save button */}
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-medium transition-colors disabled:cursor-not-allowed"
-          >
-            Save
-          </button>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                {isSaving ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    Saving...
+                  </span>
+                ) : saveError ? (
+                  <span className="text-red-600 dark:text-red-400">{saveError}</span>
+                ) : lastSaved ? (
+                  <span className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Auto-saved {lastSaved.toLocaleTimeString()}
+                  </span>
+                ) : null}
+              </div>
+
+              {/* Action menu for subscribers (simpler version) */}
+              <ActionMenu
+                isSubscribed={isSubscribed}
+                onSaveToAccount={handleSave}
+                onExportPNG={handleExportPNG}
+                canExport={!!(getSerializableState().device && getSerializableState().gradient && getSerializableState().qrBlocks.length > 0)}
+                onShowUpgrade={handleShowUpgrade}
+              />
+            </>
+          )}
         </div>
       </div>
 
@@ -237,9 +317,19 @@ export default function WallpaperCreator({
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex items-center justify-center p-8">
-          <PreviewPhone />
+          <PreviewPhone isSubscribed={isSubscribed} />
         </div>
       </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => {
+          setShowUpgradeModal(false)
+          setUpgradeFeature(undefined)
+        }}
+        feature={upgradeFeature}
+      />
     </div>
   )
 }

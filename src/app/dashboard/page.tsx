@@ -28,20 +28,39 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user) return
 
+    const controller = new AbortController()
+    let timeoutId: NodeJS.Timeout
+
     const fetchDesigns = async () => {
       try {
         setLoading(true)
+        setError(null)
+
+        // Set a timeout for the fetch operation
+        timeoutId = setTimeout(() => {
+          controller.abort()
+          setError('Request timed out. Please refresh the page.')
+          setLoading(false)
+        }, 15000) // 15 second timeout
+
         const userDesigns = await getDesigns()
+        clearTimeout(timeoutId)
         setDesigns(userDesigns)
+        setLoading(false)
       } catch (err) {
+        clearTimeout(timeoutId)
         console.error('Failed to fetch designs:', err)
-        setError('Failed to load your designs')
-      } finally {
+        setError('Failed to load your designs. Please try refreshing the page.')
         setLoading(false)
       }
     }
 
     fetchDesigns()
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      controller.abort()
+    }
   }, [user])
 
   const handleDeleteDesign = async (id: string) => {
