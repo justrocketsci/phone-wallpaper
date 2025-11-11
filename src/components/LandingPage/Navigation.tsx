@@ -9,18 +9,34 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3">
-              <Image 
-                src="/product-logo.svg" 
-                alt="QR Canvas Logo" 
-                width={32} 
-                height={32}
-                className="w-8 h-8"
-              />
-              <span className="text-xl font-semibold text-slate-900 dark:text-white">
-                QR Canvas
-              </span>
-            </Link>
+            <SignedOut>
+              <Link href="/" className="flex items-center gap-3">
+                <Image 
+                  src="/product-logo.svg" 
+                  alt="QR Canvas Logo" 
+                  width={32} 
+                  height={32}
+                  className="w-8 h-8"
+                />
+                <span className="text-xl font-semibold text-slate-900 dark:text-white">
+                  QR Canvas
+                </span>
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link href="/dashboard" className="flex items-center gap-3">
+                <Image 
+                  src="/product-logo.svg" 
+                  alt="QR Canvas Logo" 
+                  width={32} 
+                  height={32}
+                  className="w-8 h-8"
+                />
+                <span className="text-xl font-semibold text-slate-900 dark:text-white">
+                  QR Canvas
+                </span>
+              </Link>
+            </SignedIn>
           </div>
 
           {/* Auth Buttons */}
@@ -40,6 +56,12 @@ export function Navigation() {
               </Link>
             </SignedOut>
             <SignedIn>
+              <Link 
+                href="/dashboard"
+                className="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
+              >
+                Dashboard
+              </Link>
               <Link 
                 href="/create"
                 className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors duration-200"

@@ -19,7 +19,25 @@ model User {
   subscriptionStatus String?  // active, canceled, past_due, etc.
   subscriptionEndsAt DateTime?
   
+  // Relations
+  designs           Design[]
+  
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+}
+
+model Design {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name        String
+  settings    Json     // Stores device, gradient, qrBlocks, typography
+  thumbnail   String?  // Optional base64 thumbnail for grid view
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
 }
 

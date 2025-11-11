@@ -65,6 +65,13 @@ export interface Typography {
   textTransform: 'none' | 'uppercase' | 'lowercase'
 }
 
+export interface SerializableState {
+  device: Device | null
+  gradient: Gradient | null
+  qrBlocks: QRBlock[]
+  typography: Typography
+}
+
 interface WallpaperState {
   device: Device | null
   gradient: Gradient | null
@@ -75,19 +82,24 @@ interface WallpaperState {
   addQRBlock: (block: QRBlock) => void
   updateQRBlock: (id: string, updates: Partial<QRBlock>) => void
   removeQRBlock: (id: string) => void
+  loadFromDesign: (settings: SerializableState) => void
+  resetStore: () => void
+  getSerializableState: () => SerializableState
 }
 
-export const useWallpaperStore = create<WallpaperState>((set) => ({
+const defaultTypography: Typography = {
+  fontFamily: 'inter',
+  fontSize: 56,
+  fontWeight: 600,
+  letterSpacing: 0,
+  textTransform: 'none',
+}
+
+export const useWallpaperStore = create<WallpaperState>((set, get) => ({
   device: null,
   gradient: null,
   qrBlocks: [],
-  typography: {
-    fontFamily: 'inter',
-    fontSize: 56,
-    fontWeight: 600,
-    letterSpacing: 0,
-    textTransform: 'none',
-  },
+  typography: defaultTypography,
   setDevice: (device) => set({ device }),
   setGradient: (gradient) => set({ gradient }),
   addQRBlock: (block) => set((state) => {
@@ -102,5 +114,26 @@ export const useWallpaperStore = create<WallpaperState>((set) => ({
   removeQRBlock: (id) => set((state) => ({
     qrBlocks: state.qrBlocks.filter((block) => block.id !== id),
   })),
+  loadFromDesign: (settings) => set({
+    device: settings.device,
+    gradient: settings.gradient,
+    qrBlocks: settings.qrBlocks,
+    typography: settings.typography,
+  }),
+  resetStore: () => set({
+    device: null,
+    gradient: null,
+    qrBlocks: [],
+    typography: defaultTypography,
+  }),
+  getSerializableState: () => {
+    const state = get()
+    return {
+      device: state.device,
+      gradient: state.gradient,
+      qrBlocks: state.qrBlocks,
+      typography: state.typography,
+    }
+  },
 }))
 

@@ -3,7 +3,11 @@ import { redirect } from 'next/navigation'
 import WallpaperCreator from '@/components/WallpaperCreator'
 import { getUserSubscription } from '@/lib/subscription'
 
-export default async function CreatePage() {
+export default async function CreatePage({
+  searchParams,
+}: {
+  searchParams: { template?: string; design?: string }
+}) {
   const { userId } = await auth()
 
   if (!userId) {
@@ -12,14 +16,13 @@ export default async function CreatePage() {
 
   const subscription = await getUserSubscription()
 
-  // Redirect to subscribe page if no active subscription
-  if (!subscription?.isActive) {
-    redirect('/subscribe')
-  }
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <WallpaperCreator />
+      <WallpaperCreator
+        templateId={searchParams.template}
+        designId={searchParams.design}
+        isSubscribed={subscription?.isActive || false}
+      />
     </main>
   )
 }
