@@ -59,7 +59,24 @@ export async function exportWallpaperAsPNG(): Promise<void> {
   // Generate and draw QR codes
   for (const block of qrBlocks) {
     const xPos = (device.width * block.x) / 100
-    const yPos = (device.height * block.y) / 100
+    
+    // Calculate optimal vertical position for single QR code
+    let yPercent: number
+    if (qrBlocks.length === 1) {
+      if (device.systemUI?.lockScreenClock && device.systemUI?.bottomWidgets) {
+        // Estimate bottom of time display (time starts at timeTopPercent, add ~5.5% for digit height)
+        const timeBottom = device.systemUI.lockScreenClock.timeTopPercent + 5.5
+        const widgetsTop = device.systemUI.bottomWidgets.topPercent
+        // Center between time and widgets
+        yPercent = (timeBottom + widgetsTop) / 2
+      } else {
+        // Fallback for devices without systemUI data
+        yPercent = 50
+      }
+    } else {
+      yPercent = block.y
+    }
+    const yPos = (device.height * yPercent) / 100
 
     try {
       // Generate QR code with fixed high resolution (1024px ensures crisp quality)

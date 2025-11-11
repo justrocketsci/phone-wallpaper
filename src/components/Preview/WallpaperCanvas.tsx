@@ -124,9 +124,25 @@ export function WallpaperCanvas({
       {qrBlocks.map((block) => {
         const qrImage = qrImages[block.id]
         const xPos = (width * block.x) / 100
-        // Center single QR code vertically, use original position for multiple QRs
-        const yPercent = qrBlocks.length === 1 ? 50 : block.y
+        
+        // Calculate optimal vertical position for single QR code
+        let yPercent: number
+        if (qrBlocks.length === 1) {
+          if (device?.systemUI?.lockScreenClock && device?.systemUI?.bottomWidgets) {
+            // Estimate bottom of time display (time starts at timeTopPercent, add ~5.5% for digit height)
+            const timeBottom = device.systemUI.lockScreenClock.timeTopPercent + 5.5
+            const widgetsTop = device.systemUI.bottomWidgets.topPercent
+            // Center between time and widgets
+            yPercent = (timeBottom + widgetsTop) / 2
+          } else {
+            // Fallback for devices without systemUI data
+            yPercent = 50
+          }
+        } else {
+          yPercent = block.y
+        }
         const yPos = (height * yPercent) / 100
+        
         const iconSize = Math.max(16, Math.round(typography.fontSize * 1.25))
         const gapSize = Math.max(6, Math.round(typography.fontSize * 0.35))
 
