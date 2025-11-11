@@ -80,12 +80,13 @@ export function PhoneShowcase() {
             className="absolute overflow-hidden transition-opacity duration-300 z-0"
             style={{ 
               opacity: isTransitioning ? 0.7 : 1,
-              // Fill the screen area edge to edge
-              top: '1.4%',
-              left: '2.1%',
-              width: '95.8%',
-              height: '97.2%',
-              borderRadius: '52px', // Match the actual screen corner radius
+              // Adjusted to fill the screen area more precisely
+              top: '1.2%',
+              left: '1.9%',
+              width: '96.2%',
+              height: '97.6%',
+              // Use percentage-based border radius that scales with container
+              borderRadius: '8.5%', 
             }}
           >
             {/* Gradient Background */}
