@@ -26,7 +26,7 @@ export function Hero() {
 
             {/* Sub-headline */}
             <p className="text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 mb-12 leading-relaxed">
-              Create stunning QR code wallpapers that turn every phone unlock into an opportunity. 
+              Create stunning QR code wallpapers that turn every phone lock screen into an opportunity. 
               Drive traffic, boost engagement, and make your call-to-action unforgettable.
             </p>
 
