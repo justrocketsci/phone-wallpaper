@@ -43,6 +43,7 @@ export default function WallpaperCreator({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>(undefined)
   const [designCount, setDesignCount] = useState<number | null>(null)
+  const [showWatermark, setShowWatermark] = useState(false)
 
   const {
     loadFromDesign,
@@ -204,6 +205,13 @@ export default function WallpaperCreator({
     setShowUpgradeModal(true)
   }
 
+  // Handler for when user reaches Step 3
+  const handleStep3Reached = () => {
+    if (!isSubscribed) {
+      setShowWatermark(true)
+    }
+  }
+
   // Auto-save every 30 seconds
   useEffect(() => {
     // Don't auto-save for non-subscribers
@@ -315,9 +323,9 @@ export default function WallpaperCreator({
 
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        <Sidebar onStep3Reached={handleStep3Reached} />
         <div className="flex-1 flex items-center justify-center p-8">
-          <PreviewPhone isSubscribed={isSubscribed} />
+          <PreviewPhone isSubscribed={isSubscribed} showWatermark={showWatermark} />
         </div>
       </div>
 

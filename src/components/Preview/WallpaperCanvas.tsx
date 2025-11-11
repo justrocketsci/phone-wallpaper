@@ -12,6 +12,8 @@ interface WallpaperCanvasProps {
   height: number
   displayWidth: number
   displayHeight: number
+  isSubscribed: boolean
+  showWatermark: boolean
 }
 
 export function WallpaperCanvas({
@@ -19,6 +21,8 @@ export function WallpaperCanvas({
   height,
   displayWidth,
   displayHeight,
+  isSubscribed,
+  showWatermark,
 }: WallpaperCanvasProps) {
   const { device, gradient, qrBlocks, typography } = useWallpaperStore()
   const [qrImages, setQrImages] = useState<{ [key: string]: string }>({})
@@ -234,6 +238,33 @@ export function WallpaperCanvas({
               Add QR codes to see them here
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Watermark overlay for non-subscribers who reached Step 3 */}
+      {!isSubscribed && showWatermark && (
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+          {/* Multiple watermarks evenly distributed vertically */}
+          {Array.from({ length: 8 }).map((_, index) => {
+            const spacing = height / 6.5
+            const yOffset = (index * spacing) - (spacing * 0.5)
+            return (
+              <div
+                key={index}
+                className="absolute left-1/2 text-white font-bold whitespace-nowrap select-none"
+                style={{
+                  top: `${yOffset}px`,
+                  fontSize: '90px',
+                  opacity: 0.4,
+                  transform: 'translate(-50%, 0) rotate(-45deg)',
+                  letterSpacing: '6px',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                }}
+              >
+                MADE IN QRCANVAS.APP
+              </div>
+            )
+          })}
         </div>
       )}
 

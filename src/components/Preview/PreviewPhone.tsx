@@ -7,9 +7,10 @@ import { useRef, useEffect, useState } from 'react'
 
 interface PreviewPhoneProps {
   isSubscribed: boolean
+  showWatermark: boolean
 }
 
-export function PreviewPhone({ isSubscribed }: PreviewPhoneProps) {
+export function PreviewPhone({ isSubscribed, showWatermark }: PreviewPhoneProps) {
   const { device } = useWallpaperStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 276, height: 600 })
@@ -68,6 +69,8 @@ export function PreviewPhone({ isSubscribed }: PreviewPhoneProps) {
           height={device.height}
           displayWidth={dimensions.width}
           displayHeight={dimensions.height}
+          isSubscribed={isSubscribed}
+          showWatermark={showWatermark}
         />
       </div>
 
