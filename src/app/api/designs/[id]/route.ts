@@ -8,7 +8,7 @@ import { prisma } from '@/lib/db'
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth()
@@ -16,6 +16,9 @@ export async function GET(
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    // Await params before accessing properties (Next.js 15+)
+    const { id } = await params
 
     // Find or create user by Clerk ID
     let user = await prisma.user.findUnique({
@@ -39,7 +42,7 @@ export async function GET(
 
     const design = await prisma.design.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: user.id, // Ensure user owns this design
       },
     })
@@ -64,7 +67,7 @@ export async function GET(
  */
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth()
@@ -72,6 +75,9 @@ export async function PATCH(
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    // Await params before accessing properties (Next.js 15+)
+    const { id } = await params
 
     // Find or create user by Clerk ID
     let user = await prisma.user.findUnique({
@@ -96,7 +102,7 @@ export async function PATCH(
     // Check that design exists and belongs to user
     const existingDesign = await prisma.design.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: user.id,
       },
     })
@@ -110,7 +116,7 @@ export async function PATCH(
 
     // Update design with provided fields
     const design = await prisma.design.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(name !== undefined && { name }),
         ...(settings !== undefined && { settings }),
@@ -134,7 +140,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth()
@@ -142,6 +148,9 @@ export async function DELETE(
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    // Await params before accessing properties (Next.js 15+)
+    const { id } = await params
 
     // Find or create user by Clerk ID
     let user = await prisma.user.findUnique({
@@ -166,7 +175,7 @@ export async function DELETE(
     // Check that design exists and belongs to user
     const existingDesign = await prisma.design.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: user.id,
       },
     })
@@ -177,7 +186,7 @@ export async function DELETE(
 
     // Delete the design
     await prisma.design.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ success: true })
