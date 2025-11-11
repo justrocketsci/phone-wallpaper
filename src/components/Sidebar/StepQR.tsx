@@ -53,7 +53,11 @@ export function StepQR() {
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
               placeholder="My Website"
+              maxLength={30}
             />
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 text-right">
+              {newLabel.length}/30 characters
+            </div>
           </div>
           <Button
             onClick={handleAddQR}

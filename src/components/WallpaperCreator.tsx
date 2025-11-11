@@ -315,7 +315,12 @@ export default function WallpaperCreator({
       <div className="flex flex-1 overflow-hidden">
         <Sidebar onStep3Reached={handleStep3Reached} />
         <div className="flex-1 flex items-center justify-center p-8">
-          <PreviewPhone isSubscribed={isSubscribed} showWatermark={showWatermark} />
+          <PreviewPhone 
+            isSubscribed={isSubscribed} 
+            showWatermark={showWatermark}
+            onSave={handleSave}
+            isSaving={isSaving}
+          />
         </div>
       </div>
 

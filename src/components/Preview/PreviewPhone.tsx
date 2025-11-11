@@ -8,9 +8,11 @@ import { useRef, useEffect, useState } from 'react'
 interface PreviewPhoneProps {
   isSubscribed: boolean
   showWatermark: boolean
+  onSave?: () => void
+  isSaving?: boolean
 }
 
-export function PreviewPhone({ isSubscribed, showWatermark }: PreviewPhoneProps) {
+export function PreviewPhone({ isSubscribed, showWatermark, onSave, isSaving }: PreviewPhoneProps) {
   const { device } = useWallpaperStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 276, height: 600 })
@@ -74,7 +76,7 @@ export function PreviewPhone({ isSubscribed, showWatermark }: PreviewPhoneProps)
         />
       </div>
 
-      <ExportBar isSubscribed={isSubscribed} />
+      <ExportBar isSubscribed={isSubscribed} onSave={onSave} isSaving={isSaving} />
     </div>
   )
 }
