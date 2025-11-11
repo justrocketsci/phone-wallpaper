@@ -7,6 +7,9 @@ import { Sidebar } from './Sidebar/Sidebar'
 import { UpgradeModal } from './UpgradeModal'
 import { ActionMenu } from './ActionMenu'
 import { useWallpaperStore } from '@/lib/store'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { ArrowLeft, Check } from 'lucide-react'
 import {
   loadDesign,
   updateDesign,
@@ -244,29 +247,18 @@ export default function WallpaperCreator({
       {/* Top bar with save status */}
       <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => router.push('/dashboard')}
-            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-          </button>
-          <input
+            <ArrowLeft className="w-6 h-6" />
+          </Button>
+          <Input
             type="text"
             value={designName}
             onChange={(e) => setDesignName(e.target.value)}
-            className="text-lg font-semibold bg-transparent border-none outline-none text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
+            className="text-lg font-semibold bg-transparent border-none shadow-none focus-visible:ring-2 focus-visible:ring-blue-500 px-2"
             placeholder="Design name"
           />
         </div>
@@ -300,9 +292,7 @@ export default function WallpaperCreator({
                   <span className="text-red-600 dark:text-red-400">{saveError}</span>
                 ) : lastSaved ? (
                   <span className="flex items-center gap-1.5">
-                    <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <Check className="w-4 h-4 text-green-500" />
                     Auto-saved {lastSaved.toLocaleTimeString()}
                   </span>
                 ) : null}

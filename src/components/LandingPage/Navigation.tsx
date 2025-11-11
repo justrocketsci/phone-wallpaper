@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+import { Button } from '@/components/ui/button'
 
 export function Navigation() {
   return (
@@ -42,32 +43,28 @@ export function Navigation() {
           {/* Auth Buttons */}
           <div className="flex items-center gap-4">
             <SignedOut>
-              <Link 
-                href="/sign-in"
-                className="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
-              >
-                Sign In
-              </Link>
-              <Link 
-                href="/sign-up"
-                className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors duration-200"
-              >
-                Get Started
-              </Link>
+              <Button asChild variant="ghost">
+                <Link href="/sign-in">
+                  Sign In
+                </Link>
+              </Button>
+              <Button asChild variant="default" size="md">
+                <Link href="/sign-up">
+                  Get Started
+                </Link>
+              </Button>
             </SignedOut>
             <SignedIn>
-              <Link 
-                href="/dashboard"
-                className="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
-              >
-                Dashboard
-              </Link>
-              <Link 
-                href="/create"
-                className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors duration-200"
-              >
-                Create
-              </Link>
+              <Button asChild variant="ghost">
+                <Link href="/dashboard">
+                  Dashboard
+                </Link>
+              </Button>
+              <Button asChild variant="default" size="md">
+                <Link href="/create">
+                  Create
+                </Link>
+              </Button>
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
           </div>

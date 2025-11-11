@@ -1,6 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Check, Lock } from 'lucide-react'
 
 interface UpgradeModalProps {
   isOpen: boolean
@@ -9,8 +12,6 @@ interface UpgradeModalProps {
 }
 
 export function UpgradeModal({ isOpen, onClose, feature }: UpgradeModalProps) {
-  if (!isOpen) return null
-
   const getTitle = () => {
     if (feature) {
       return `${feature} Requires Subscription`
@@ -29,122 +30,41 @@ export function UpgradeModal({ isOpen, onClose, feature }: UpgradeModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-8 border border-slate-200 dark:border-slate-700">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-          aria-label="Close modal"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
         {/* Icon */}
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
+            <Lock className="w-8 h-8 text-white" />
           </div>
         </div>
 
-        {/* Content */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+        {/* Header */}
+        <DialogHeader>
+          <DialogTitle className="text-center mb-3">
             {getTitle()}
-          </h2>
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+          </DialogTitle>
+          <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-center">
             {getDescription()}
           </p>
-        </div>
+        </DialogHeader>
 
         {/* Features */}
         <div className="space-y-3 mb-8">
           <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-            <svg
-              className="w-5 h-5 text-green-500 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
             <span>Unlimited wallpaper exports</span>
           </div>
           <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-            <svg
-              className="w-5 h-5 text-green-500 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
             <span>Up to 2 QR codes per wallpaper</span>
           </div>
           <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-            <svg
-              className="w-5 h-5 text-green-500 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
             <span>High-resolution PNG exports</span>
           </div>
           <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-            <svg
-              className="w-5 h-5 text-green-500 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
             <span>Save up to 10 designs</span>
           </div>
         </div>
@@ -164,21 +84,21 @@ export function UpgradeModal({ isOpen, onClose, feature }: UpgradeModalProps) {
 
         {/* Actions */}
         <div className="flex flex-col gap-3">
-          <Link
-            href="/subscribe"
-            className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors duration-200 shadow-lg text-center"
-          >
-            Subscribe Now
-          </Link>
-          <button
+          <Button asChild variant="secondary" size="lg" className="w-full">
+            <Link href="/subscribe">
+              Subscribe Now
+            </Link>
+          </Button>
+          <Button
             onClick={onClose}
-            className="w-full px-6 py-3 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors duration-200 text-center"
+            variant="ghost"
+            className="w-full"
           >
             Maybe Later
-          </button>
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

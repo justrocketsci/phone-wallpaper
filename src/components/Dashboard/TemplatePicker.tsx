@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { templates } from '@/data/templates'
 import { gradients } from '@/data/gradients'
+import { QrCode, Plus } from 'lucide-react'
 
 export function TemplatePicker() {
   return (
@@ -49,13 +50,7 @@ export function TemplatePicker() {
                       className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-4 flex flex-col items-center gap-2"
                     >
                       <div className="w-20 h-20 bg-slate-800 rounded-md flex items-center justify-center">
-                        <svg
-                          className="w-16 h-16 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm-2 8h8v8H3v-8zm2 2v4h4v-4H5zm8-12v8h8V3h-8zm2 2h4v4h-4V5zm4 12h-2v2h2v-2zm-6-2h2v2h-2v-2zm2 2h2v2h-2v-2zm2 2h2v2h-2v-2zm0-4h2v2h-2v-2z" />
-                        </svg>
+                        <QrCode className="w-16 h-16 text-white" />
                       </div>
                       <span className="text-xs font-medium text-slate-700 truncate max-w-full px-2">
                         {block.label}
@@ -67,19 +62,7 @@ export function TemplatePicker() {
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-blue-600/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                   <div className="text-center text-white">
-                    <svg
-                      className="w-12 h-12 mx-auto mb-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
+                    <Plus className="w-12 h-12 mx-auto mb-2" />
                     <span className="font-semibold">Use This Template</span>
                   </div>
                 </div>
@@ -97,9 +80,7 @@ export function TemplatePicker() {
                 {/* Template details */}
                 <div className="mt-3 flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
                   <div className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm-2 8h8v8H3v-8zm2 2v4h4v-4H5zm8-12v8h8V3h-8zm2 2h4v4h-4V5zm4 12h-2v2h2v-2zm-6-2h2v2h-2v-2zm2 2h2v2h-2v-2zm2 2h2v2h-2v-2zm0-4h2v2h-2v-2z" />
-                    </svg>
+                    <QrCode className="w-4 h-4" />
                     <span>{template.qrBlocks.length} QR codes</span>
                   </div>
                   <div className="flex items-center gap-1">

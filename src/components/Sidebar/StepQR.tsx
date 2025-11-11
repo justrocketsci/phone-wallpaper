@@ -4,6 +4,9 @@ import { useWallpaperStore, QRBlock } from '@/lib/store'
 import { icons } from '@/data/icons'
 import { clsx } from 'clsx'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export function StepQR() {
   const { qrBlocks, addQRBlock, updateQRBlock, removeQRBlock } = useWallpaperStore()
@@ -36,31 +39,30 @@ export function StepQR() {
         <div className="space-y-3 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
           <div>
             <label className="block text-sm font-medium mb-1">URL</label>
-            <input
+            <Input
               type="url"
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}
               placeholder="https://example.com"
-              className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Label</label>
-            <input
+            <Input
               type="text"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
               placeholder="My Website"
-              className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm"
             />
           </div>
-          <button
+          <Button
             onClick={handleAddQR}
             disabled={!newUrl}
-            className="w-full py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-md text-sm font-medium transition-colors"
+            variant="secondary"
+            className="w-full"
           >
             Add QR Code ({qrBlocks.length}/2)
-          </button>
+          </Button>
         </div>
       )}
 
@@ -77,32 +79,38 @@ export function StepQR() {
                   {block.url}
                 </div>
               </div>
-              <button
+              <Button
                 onClick={() => removeQRBlock(block.id)}
-                className="ml-2 text-red-500 hover:text-red-600 text-sm"
+                variant="ghost"
+                size="sm"
+                className="ml-2 text-red-500 hover:text-red-600"
               >
                 Remove
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-2">
               <div>
                 <label className="block text-xs font-medium mb-1">Icon</label>
-                <select
+                <Select
                   value={block.iconType || 'website'}
-                  onChange={(e) =>
+                  onValueChange={(value) =>
                     updateQRBlock(block.id, {
-                      iconType: e.target.value as QRBlock['iconType'],
+                      iconType: value as QRBlock['iconType'],
                     })
                   }
-                  className="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
                 >
-                  {icons.map((icon) => (
-                    <option key={icon.id} value={icon.id}>
-                      {icon.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {icons.map((icon) => (
+                      <SelectItem key={icon.id} value={icon.id}>
+                        {icon.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
