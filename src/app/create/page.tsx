@@ -1,7 +1,17 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
 import WallpaperCreator from '@/components/WallpaperCreator'
 import { getUserSubscription } from '@/lib/subscription'
+
+export const metadata: Metadata = {
+  title: 'Create Wallpaper',
+  description: 'Design and create your custom QR code wallpaper. Choose from various backgrounds, add QR codes, and export for your device.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+}
 
 export default async function CreatePage({
   searchParams,

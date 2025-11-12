@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="relative z-10 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand */}
           <div>
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
@@ -36,24 +36,26 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Legal section temporarily removed - will be restored after review */}
+          {/* 
           <div>
             <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
               Legal
             </h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors text-sm">
+                <Link href="/privacy" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors text-sm">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors text-sm">
+                <Link href="/terms" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors text-sm">
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
+          */}
         </div>
 
         {/* Copyright */}
