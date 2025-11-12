@@ -72,21 +72,21 @@ export function PhoneShowcase() {
   return (
     <div className="relative w-full h-full flex items-center lg:items-start justify-center z-10">
       {/* iPhone Frame Container */}
-      <div className="relative w-full max-w-[220px] md:max-w-[260px] lg:max-w-[280px] drop-shadow-2xl">
+      <div className="relative w-full max-w-[280px] md:max-w-[340px] lg:max-w-[380px] drop-shadow-2xl">
         {/* iPhone Frame Image */}
-        <div className="relative w-full aspect-[614/1270]">
+        <div className="relative w-full aspect-[9/16]">
           {/* Wallpaper Content - positioned behind the frame, inside the screen area */}
           <div 
             className="absolute overflow-hidden transition-opacity duration-300 z-0"
             style={{ 
               opacity: isTransitioning ? 0.7 : 1,
-              // Adjusted to fill the screen area more precisely
-              top: '1.2%',
-              left: '1.9%',
-              width: '96.2%',
-              height: '97.6%',
-              // Use percentage-based border radius that scales with container
-              borderRadius: '8.5%', 
+              // Adjusted to match iphone-frame2.png transparent screen bounds
+              top: '2.92%',
+              left: '11.48%',
+              width: '77.13%',
+              height: '94.17%',
+              // Use ellipse-based border radius that scales with container
+              borderRadius: '14% / 7%', 
             }}
           >
             {/* Gradient Background */}
@@ -178,7 +178,7 @@ export function PhoneShowcase() {
 
           {/* iPhone Frame Overlay - sits on top to mask the wallpaper */}
           <Image
-            src="/iphone-frame.png"
+            src="/iphone-frame2.png"
             alt="iPhone Frame"
             fill
             className="object-contain relative z-10 pointer-events-none"
