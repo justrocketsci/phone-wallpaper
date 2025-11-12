@@ -4,6 +4,20 @@ import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/db'
 
+// Helper function to get current period end from subscription items
+function getCurrentPeriodEnd(subscription: Stripe.Subscription): number | null {
+  const items = subscription.items?.data ?? []
+  if (items.length === 0) return null
+  
+  let maxPeriodEnd = items[0].current_period_end
+  for (const item of items) {
+    if (item.current_period_end > maxPeriodEnd) {
+      maxPeriodEnd = item.current_period_end
+    }
+  }
+  return maxPeriodEnd
+}
+
 export async function POST(req: Request) {
   const body = await req.text()
   const signature = (await headers()).get('Stripe-Signature') as string
@@ -65,14 +79,15 @@ export async function POST(req: Request) {
         }
 
         // Update subscription status
+        const currentPeriodEnd = getCurrentPeriodEnd(subscription)
         await prisma.user.update({
           where: { id: user.id },
           data: {
             subscriptionStatus: subscription.status,
             subscriptionEndsAt: subscription.cancel_at
               ? new Date(subscription.cancel_at * 1000)
-              : subscription.current_period_end
-              ? new Date(subscription.current_period_end * 1000)
+              : currentPeriodEnd
+              ? new Date(currentPeriodEnd * 1000)
               : null,
           },
         })
