@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useUser, UserButton } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
 import { DesignGrid } from '@/components/Dashboard/DesignGrid'
@@ -99,7 +100,7 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <a href="/" className="flex items-center gap-3">
+              <Link href="/" className="flex items-center gap-3">
                 <Image 
                   src="/product-logo.svg" 
                   alt="QR Canvas Logo" 
@@ -110,7 +111,7 @@ export default function DashboardPage() {
                 <span className="text-xl font-semibold text-slate-900 dark:text-white">
                   QR Canvas
                 </span>
-              </a>
+              </Link>
             </div>
             <div className="flex items-center gap-4">
               <UserButton afterSignOutUrl="/" />

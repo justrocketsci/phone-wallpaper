@@ -66,7 +66,7 @@ export function DashboardHeader({ userName, isNewUser, isSubscribed }: Dashboard
             🎨 Getting Started
           </h3>
           <p className="text-slate-700 dark:text-slate-300 mb-4">
-            Click "Create New Design" above to start building your first QR code wallpaper. 
+            Click &quot;Create New Design&quot; above to start building your first QR code wallpaper. 
             Choose your device, pick a gradient background, add your QR codes, and export!
           </p>
           <div className="flex flex-wrap gap-3 text-sm">
