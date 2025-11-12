@@ -54,8 +54,26 @@ export async function GET(req: Request) {
     console.log('Subscription retrieved:', {
       id: subscription.id,
       status: subscription.status,
-      current_period_end: subscription.current_period_end,
+      items: subscription.items?.data?.length ?? 0,
     })
+
+    const subscriptionItems = subscription.items?.data ?? []
+
+    if (subscriptionItems.length === 0) {
+      console.error('❌ Subscription has no items available for period calculation')
+      return NextResponse.json(
+        { success: false, error: 'Subscription items missing' },
+        { status: 400 }
+      )
+    }
+
+    let currentPeriodEndSeconds = subscriptionItems[0].current_period_end
+
+    for (const item of subscriptionItems) {
+      if (item.current_period_end > currentPeriodEndSeconds) {
+        currentPeriodEndSeconds = item.current_period_end
+      }
+    }
 
     // Update user in database
     console.log('🔍 Finding user in database...')
@@ -78,7 +96,7 @@ export async function GET(req: Request) {
         stripeCustomerId: session.customer as string,
         stripeSubscriptionId: subscriptionId,
         subscriptionStatus: subscription.status,
-        subscriptionEndsAt: new Date(subscription.current_period_end * 1000),
+        subscriptionEndsAt: new Date(currentPeriodEndSeconds * 1000),
       },
     })
 
@@ -92,7 +110,7 @@ export async function GET(req: Request) {
       success: true,
       subscription: {
         status: subscription.status,
-        currentPeriodEnd: subscription.current_period_end,
+        currentPeriodEnd: currentPeriodEndSeconds,
       }
     })
   } catch (error: any) {
