@@ -21,7 +21,7 @@ export const showcaseWallpapers: ShowcaseWallpaper[] = [
       id: 'qr-canvas-gradient',
       name: 'QR Canvas',
       type: 'linear',
-      colors: ['#667eea', '#764ba2', '#f093fb'],
+      colors: ['#e4e9ff', '#8fa3ff', '#764ba2', '#f093fb'],
       angle: 135,
     },
     qrBlocks: [
@@ -46,7 +46,7 @@ export const showcaseWallpapers: ShowcaseWallpaper[] = [
       id: 'space-gradient',
       name: 'Space',
       type: 'linear',
-      colors: ['#0f2027', '#203a43', '#2c5364'],
+      colors: ['#d6efff', '#5b7a8a', '#203a43', '#0f2027'],
       angle: 135,
     },
     qrBlocks: [
@@ -71,7 +71,7 @@ export const showcaseWallpapers: ShowcaseWallpaper[] = [
       id: 'astroforge-gradient',
       name: 'AstroForge',
       type: 'linear',
-      colors: ['#1a1a1a', '#ff6b35', '#1a1a1a'],
+      colors: ['#ffe6d5', '#ff8f5b', '#302727'],
       angle: 135,
     },
     qrBlocks: [
@@ -96,7 +96,7 @@ export const showcaseWallpapers: ShowcaseWallpaper[] = [
       id: 'apex-gradient',
       name: 'Apex Space',
       type: 'linear',
-      colors: ['#1a1a2e', '#0f4c75', '#ffd700', '#1a1a2e'],
+      colors: ['#deeaff', '#3a70b3', '#ffd700', '#202244'],
       angle: 135,
     },
     qrBlocks: [
