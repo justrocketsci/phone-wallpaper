@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function SubscribeSuccessPage() {
+function SubscribeSuccessContent() {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const sessionId = searchParams.get('session_id')
@@ -138,5 +137,26 @@ export default function SubscribeSuccessPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SubscribeSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-6">
+        <div className="max-w-md w-full">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 text-center">
+            <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+              Loading...
+            </h1>
+          </div>
+        </div>
+      </div>
+    }>
+      <SubscribeSuccessContent />
+    </Suspense>
   )
 }
