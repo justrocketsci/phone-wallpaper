@@ -10,19 +10,24 @@ const requiredEnvVars = {
   // Clerk Authentication
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
-  CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
   
   // Stripe Payments
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID,
-  
-  // Base URL (for SEO and redirects)
-  NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+} as const
+
+// Runtime-only variables (not needed during build)
+const runtimeOnlyEnvVars = {
+  // Webhook secrets (only needed at runtime for API routes)
+  CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
 } as const
 
 const optionalEnvVars = {
+  // Base URL (has fallbacks everywhere it's used)
+  NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+  
   // Google Analytics (optional)
   NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
   
@@ -38,6 +43,7 @@ const optionalEnvVars = {
 export function validateEnv(): void {
   const missing: string[] = []
   const invalid: Array<{ key: string; reason: string }> = []
+  const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build'
 
   // Check required variables
   for (const [key, value] of Object.entries(requiredEnvVars)) {
@@ -48,17 +54,31 @@ export function validateEnv(): void {
       if (key === 'DATABASE_URL' && !value.startsWith('postgresql://')) {
         invalid.push({ key, reason: 'must be a valid PostgreSQL connection string' })
       }
-      if (key === 'NEXT_PUBLIC_BASE_URL' && !value.startsWith('http')) {
-        invalid.push({ key, reason: 'must be a valid URL starting with http:// or https://' })
-      }
-      if (key.includes('STRIPE') && key.includes('SECRET') && !value.startsWith('sk_')) {
+      if (key === 'STRIPE_SECRET_KEY' && !value.startsWith('sk_')) {
         invalid.push({ key, reason: 'must be a valid Stripe secret key (starts with sk_)' })
       }
-      if (key.includes('STRIPE') && key.includes('PUBLISHABLE') && !value.startsWith('pk_')) {
+      if (key === 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY' && !value.startsWith('pk_')) {
         invalid.push({ key, reason: 'must be a valid Stripe publishable key (starts with pk_)' })
       }
       if (key === 'STRIPE_PRICE_ID' && !value.startsWith('price_')) {
         invalid.push({ key, reason: 'must be a valid Stripe price ID (starts with price_)' })
+      }
+    }
+  }
+
+  // Check runtime-only variables (only in production runtime, not during build)
+  if (!isBuildTime) {
+    for (const [key, value] of Object.entries(runtimeOnlyEnvVars)) {
+      if (!value || value.trim() === '') {
+        missing.push(key)
+      } else {
+        // Additional validation
+        if (key === 'STRIPE_WEBHOOK_SECRET' && !value.startsWith('whsec_')) {
+          invalid.push({ key, reason: 'must be a valid Stripe webhook secret (starts with whsec_)' })
+        }
+        if (key === 'CLERK_WEBHOOK_SECRET' && !value.startsWith('whsec_')) {
+          invalid.push({ key, reason: 'must be a valid Clerk webhook secret (starts with whsec_)' })
+        }
       }
     }
   }
@@ -105,7 +125,7 @@ export function validateEnv(): void {
  * Get a required environment variable
  * Throws an error if not set (should be caught by validateEnv at startup)
  */
-export function getRequiredEnv(key: keyof typeof requiredEnvVars): string {
+export function getRequiredEnv(key: keyof typeof requiredEnvVars | keyof typeof runtimeOnlyEnvVars): string {
   const value = process.env[key]
   if (!value) {
     throw new Error(`Required environment variable ${key} is not set`)
