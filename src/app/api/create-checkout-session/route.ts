@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { getOrCreateUser } from '@/lib/user'
 import { prisma } from '@/lib/db'
+import { rateLimiters, checkRateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: Request) {
   try {
@@ -10,6 +11,23 @@ export async function POST(req: Request) {
 
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 })
+    }
+
+    // Rate limiting (stricter for payment endpoints)
+    const rateLimit = await checkRateLimit(rateLimiters.checkout, userId)
+    if (!rateLimit.success) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+        { 
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-RateLimit-Limit': String(rateLimit.limit || 0),
+            'X-RateLimit-Remaining': String(rateLimit.remaining || 0),
+            'X-RateLimit-Reset': String(rateLimit.reset || 0),
+          }
+        }
+      )
     }
 
     // Get or create user in database (no webhook needed!)
@@ -51,8 +69,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/subscribe/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/subscribe/cancel`,
       metadata: {
         clerkId: userId,
       },

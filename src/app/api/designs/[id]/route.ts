@@ -1,6 +1,8 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { UpdateDesignSchema, validateRequest } from '@/lib/schemas'
+import { rateLimiters, checkRateLimit } from '@/lib/rate-limit'
 
 /**
  * GET /api/designs/[id]
@@ -15,6 +17,22 @@ export async function GET(
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Rate limiting
+    const rateLimit = await checkRateLimit(rateLimiters.designs, userId)
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': String(rateLimit.limit || 0),
+            'X-RateLimit-Remaining': String(rateLimit.remaining || 0),
+            'X-RateLimit-Reset': String(rateLimit.reset || 0),
+          }
+        }
+      )
     }
 
     // Await params before accessing properties (Next.js 15+)
@@ -76,6 +94,22 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Rate limiting
+    const rateLimit = await checkRateLimit(rateLimiters.designs, userId)
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': String(rateLimit.limit || 0),
+            'X-RateLimit-Remaining': String(rateLimit.remaining || 0),
+            'X-RateLimit-Reset': String(rateLimit.reset || 0),
+          }
+        }
+      )
+    }
+
     // Await params before accessing properties (Next.js 15+)
     const { id } = await params
 
@@ -111,8 +145,17 @@ export async function PATCH(
       return NextResponse.json({ error: 'Design not found' }, { status: 404 })
     }
 
-    const body = await request.json()
-    const { name, settings, thumbnail } = body
+    // Validate request body
+    const validation = await validateRequest(request, UpdateDesignSchema)
+    
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      )
+    }
+    
+    const { name, settings, thumbnail } = validation.data
 
     // Update design with provided fields
     const design = await prisma.design.update({
@@ -147,6 +190,22 @@ export async function DELETE(
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Rate limiting
+    const rateLimit = await checkRateLimit(rateLimiters.designs, userId)
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': String(rateLimit.limit || 0),
+            'X-RateLimit-Remaining': String(rateLimit.remaining || 0),
+            'X-RateLimit-Reset': String(rateLimit.reset || 0),
+          }
+        }
+      )
     }
 
     // Await params before accessing properties (Next.js 15+)

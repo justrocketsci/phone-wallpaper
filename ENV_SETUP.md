@@ -72,7 +72,32 @@ Get these from [Stripe Dashboard](https://dashboard.stripe.com):
 
 ---
 
-## SEO & Analytics (NEW)
+## Rate Limiting (Optional for Production)
+
+### Upstash Redis (Recommended for Production)
+
+```bash
+# Optional - For Redis-based rate limiting in production
+UPSTASH_REDIS_REST_URL=https://your-redis-instance.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-token-here
+```
+
+**Setup:**
+1. Go to [Upstash](https://upstash.com)
+2. Create a free Redis database
+3. Copy the REST URL and token
+4. Add to environment variables
+
+**Note:** Rate limiting works in-memory without Redis, but for production with multiple instances, Redis-based rate limiting is recommended.
+
+**Current Limits:**
+- Design API: 100 requests per 15 minutes per user
+- Checkout API: 10 requests per hour per user
+- General API: 200 requests per 15 minutes per user
+
+---
+
+## SEO & Analytics
 
 ### Base URL
 

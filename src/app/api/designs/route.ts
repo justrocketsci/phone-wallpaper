@@ -2,6 +2,8 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getUserSubscription } from '@/lib/subscription'
+import { CreateDesignSchema, validateRequest } from '@/lib/schemas'
+import { rateLimiters, checkRateLimit } from '@/lib/rate-limit'
 
 /**
  * GET /api/designs
@@ -13,6 +15,22 @@ export async function GET() {
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Rate limiting
+    const rateLimit = await checkRateLimit(rateLimiters.designs, userId)
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': String(rateLimit.limit || 0),
+            'X-RateLimit-Remaining': String(rateLimit.remaining || 0),
+            'X-RateLimit-Reset': String(rateLimit.reset || 0),
+          }
+        }
+      )
     }
 
     // Find or create user by Clerk ID
@@ -71,6 +89,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Rate limiting
+    const rateLimit = await checkRateLimit(rateLimiters.designs, userId)
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': String(rateLimit.limit || 0),
+            'X-RateLimit-Remaining': String(rateLimit.remaining || 0),
+            'X-RateLimit-Reset': String(rateLimit.reset || 0),
+          }
+        }
+      )
+    }
+
     // Find or create user by Clerk ID
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
@@ -91,15 +125,17 @@ export async function POST(request: Request) {
       }
     }
 
-    const body = await request.json()
-    const { name, settings, thumbnail } = body
-
-    if (!name || !settings) {
+    // Validate request body
+    const validation = await validateRequest(request, CreateDesignSchema)
+    
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Name and settings are required' },
+        { error: validation.error },
         { status: 400 }
       )
     }
+    
+    const { name, settings, thumbnail } = validation.data
 
     // Check subscription status
     const subscription = await getUserSubscription()
