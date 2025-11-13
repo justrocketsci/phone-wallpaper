@@ -32,6 +32,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://accounts.google.com https://challenges.cloudflare.com https://*.clerk.accounts.dev https://*.clerk.dev https://clerk.qrcanvas.app",
+              "worker-src 'self' blob:",
               "style-src 'self' 'unsafe-inline' https://accounts.google.com https://*.clerk.accounts.dev https://clerk.qrcanvas.app",
               "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://*.clerk.accounts.dev https://img.clerk.com https://clerk.qrcanvas.app",
               "font-src 'self' data:",
