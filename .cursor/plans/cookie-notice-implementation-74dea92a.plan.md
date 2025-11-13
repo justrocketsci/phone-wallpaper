@@ -64,7 +64,7 @@ Add "Cookies" link in the Quick Links section pointing to `/cookies`
 
 ### To-dos
 
-- [ ] Create CookieNotice.tsx component with dismiss functionality and localStorage persistence
-- [ ] Create /cookies page explaining necessary cookies used by the app
-- [ ] Add CookieNotice component to root layout.tsx
-- [ ] Add Cookie Policy link to Footer.tsx
+- [x] 
+- [x] 
+- [x] 
+- [x] 

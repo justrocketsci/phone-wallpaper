@@ -51,7 +51,7 @@ export default function TermsPage() {
                 1. Acceptance of Terms
               </h2>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                By accessing and using QR Canvas ("the Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these Terms of Service, please do not use the Service.
+                By accessing and using QR Canvas (&ldquo;the Service&rdquo;), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these Terms of Service, please do not use the Service.
               </p>
             </section>
 
@@ -190,7 +190,7 @@ export default function TermsPage() {
                 7.1 Service Availability
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                The Service is provided "as is" and "as available." We do not guarantee that the Service will be uninterrupted, secure, or error-free. We reserve the right to modify or discontinue the Service at any time.
+                The Service is provided &ldquo;as is&rdquo; and &ldquo;as available.&rdquo; We do not guarantee that the Service will be uninterrupted, secure, or error-free. We reserve the right to modify or discontinue the Service at any time.
               </p>
 
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
@@ -233,7 +233,7 @@ export default function TermsPage() {
                 10. Changes to Terms
               </h2>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                We reserve the right to modify these Terms at any time. We will notify you of any material changes by posting the new Terms on this page and updating the "Last updated" date. Your continued use of the Service after changes constitutes acceptance of the new Terms.
+                We reserve the right to modify these Terms at any time. We will notify you of any material changes by posting the new Terms on this page and updating the &ldquo;Last updated&rdquo; date. Your continued use of the Service after changes constitutes acceptance of the new Terms.
               </p>
             </section>
 

@@ -125,7 +125,7 @@ export async function validateRequest<T>(
     const result = schema.safeParse(body)
     
     if (!result.success) {
-      const errors = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`)
+      const errors = result.error.issues.map((e) => `${e.path.join('.')}: ${e.message}`)
       return {
         success: false,
         error: `Validation failed: ${errors.join(', ')}`,

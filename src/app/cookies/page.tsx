@@ -162,7 +162,7 @@ export default function CookiesPage() {
           <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
             We may update this Cookie Policy from time to time to reflect changes in our 
             practices or for operational, legal, or regulatory reasons. We will notify 
-            you of any material changes by updating the "Last updated" date at the top 
+            you of any material changes by updating the &ldquo;Last updated&rdquo; date at the top 
             of this policy.
           </p>
         </section>

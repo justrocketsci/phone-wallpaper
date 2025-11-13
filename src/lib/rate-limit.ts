@@ -12,7 +12,7 @@ import { Redis } from '@upstash/redis'
  */
 const getRateLimiter = (
   requests: number,
-  window: string
+  window: `${number} ms` | `${number} s` | `${number} m` | `${number} h` | `${number} d`
 ): Ratelimit | null => {
   // Check if Upstash Redis is configured
   const upstashUrl = process.env.UPSTASH_REDIS_REST_URL

@@ -51,7 +51,7 @@ export default function PrivacyPage() {
                 Introduction
               </h2>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                QR Canvas ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our QR code wallpaper creation service.
+                QR Canvas (&ldquo;we,&rdquo; &ldquo;our,&rdquo; or &ldquo;us&rdquo;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our QR code wallpaper creation service.
               </p>
             </section>
 
@@ -211,7 +211,7 @@ export default function PrivacyPage() {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
-                Children's Privacy
+                Children&apos;s Privacy
               </h2>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
                 Our service is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us.
@@ -223,7 +223,7 @@ export default function PrivacyPage() {
                 Changes to This Privacy Policy
               </h2>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date. You are advised to review this Privacy Policy periodically for any changes.
+                We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &ldquo;Last updated&rdquo; date. You are advised to review this Privacy Policy periodically for any changes.
               </p>
             </section>
 

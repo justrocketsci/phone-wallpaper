@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 
-export default async function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://qrcanvas.app'
   
   const currentDate = new Date()
@@ -38,6 +38,12 @@ export default async function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/terms`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/cookies`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.3,
