@@ -9,7 +9,7 @@ const nextConfig = {
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY',
+            value: 'SAMEORIGIN',
           },
           {
             key: 'X-Content-Type-Options',
@@ -40,7 +40,7 @@ const nextConfig = {
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
-              "frame-ancestors 'none'",
+              "frame-ancestors 'self'",
               "upgrade-insecure-requests",
             ].join('; '),
           },

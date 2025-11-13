@@ -61,10 +61,3 @@ Add "Cookies" link in the Quick Links section pointing to `/cookies`
 **Banner position:** Bottom-fixed, full-width
 **Animation:** Slide up from bottom on mount
 **Dismissal:** Permanent (until localStorage cleared)
-
-### To-dos
-
-- [x] 
-- [x] 
-- [x] 
-- [x] 
