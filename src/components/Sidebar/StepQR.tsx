@@ -12,13 +12,47 @@ export function StepQR() {
   const { qrBlocks, addQRBlock, updateQRBlock, removeQRBlock } = useWallpaperStore()
   const [newUrl, setNewUrl] = useState('')
   const [newLabel, setNewLabel] = useState('')
+  const [urlError, setUrlError] = useState<string | null>(null)
+
+  const normalizeUrl = (url: string): string => {
+    // Trim whitespace
+    let normalized = url.trim()
+    
+    // If no protocol, add https://
+    if (!normalized.match(/^[a-zA-Z]+:\/\//)) {
+      normalized = `https://${normalized}`
+    }
+    
+    return normalized
+  }
+
+  const validateUrl = (url: string): boolean => {
+    try {
+      const normalized = normalizeUrl(url)
+      new URL(normalized)
+      return true
+    } catch {
+      return false
+    }
+  }
 
   const handleAddQR = () => {
     if (!newUrl || qrBlocks.length >= 2) return
 
+    // Validate URL format
+    if (!validateUrl(newUrl)) {
+      setUrlError('Please enter a valid URL (e.g., example.com or https://example.com)')
+      return
+    }
+
+    setUrlError(null)
+
+    // Normalize the URL before adding
+    const normalizedUrl = normalizeUrl(newUrl)
+
     const newBlock: QRBlock = {
       id: `qr-${Date.now()}`,
-      url: newUrl,
+      url: normalizedUrl,
       label: newLabel || newUrl,
       iconType: 'website',
       x: 50,
@@ -33,6 +67,15 @@ export function StepQR() {
     setNewLabel('')
   }
 
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setNewUrl(value)
+    // Clear error when user starts typing
+    if (urlError) {
+      setUrlError(null)
+    }
+  }
+
   return (
     <div className="space-y-4">
       {qrBlocks.length < 2 && (
@@ -42,9 +85,13 @@ export function StepQR() {
             <Input
               type="url"
               value={newUrl}
-              onChange={(e) => setNewUrl(e.target.value)}
+              onChange={handleUrlChange}
               placeholder="https://example.com"
+              className={urlError ? 'border-red-500 focus-visible:ring-red-500' : ''}
             />
+            {urlError && (
+              <p className="text-xs text-red-500 mt-1">{urlError}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Label</label>

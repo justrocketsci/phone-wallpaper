@@ -104,10 +104,14 @@ export const CreateDesignSchema = z.object({
  */
 export const UpdateDesignSchema = z.object({
   name: z
-    .string()
-    .min(1, 'Name is required')
-    .max(100, 'Name too long (max 100 chars)')
-    .trim()
+    .preprocess(
+      (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
+      z
+        .string()
+        .min(1, 'Name is required')
+        .max(100, 'Name too long (max 100 chars)')
+        .trim()
+    )
     .optional(),
   settings: DesignSettingsSchema.optional(),
   thumbnail: Base64ImageSchema.optional().nullable(),

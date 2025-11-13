@@ -81,11 +81,15 @@ export default function WallpaperCreator({
         setIsLoading(true)
 
         if (designId) {
-          // Load existing design
-          const design = await loadDesign(designId)
-          loadFromDesign(design.settings)
-          setDesignName(design.name)
-          setCurrentDesignId(design.id)
+          // Only load from server if we don't already have this design loaded
+          // This prevents reloading when the URL is updated after save
+          if (currentDesignId !== designId) {
+            // Load existing design
+            const design = await loadDesign(designId)
+            loadFromDesign(design.settings)
+            setDesignName(design.name)
+            setCurrentDesignId(design.id)
+          }
         } else if (templateId) {
           // Load template
           const template = templates.find((t) => t.id === templateId)
@@ -117,9 +121,11 @@ export default function WallpaperCreator({
             setDesignName(generateDesignName())
           }
         } else {
-          // Fresh start
-          resetStore()
-          setDesignName(generateDesignName())
+          // Fresh start - only reset if we don't have a current design
+          if (!currentDesignId) {
+            resetStore()
+            setDesignName(generateDesignName())
+          }
         }
       } catch (error) {
         console.error('Failed to load design:', error)

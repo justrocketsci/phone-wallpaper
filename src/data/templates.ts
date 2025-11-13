@@ -17,7 +17,7 @@ export const templates: Template[] = [
     gradient: 'ocean-blue',
     qrBlocks: [
       {
-        url: 'https://youtube.com/@yourhandle',
+        url: 'https://www.youtube.com/@yourhandle',
         label: '<just rocket science>',
         iconType: 'youtube',
         x: 50,
@@ -27,7 +27,7 @@ export const templates: Template[] = [
         errorCorrection: 'H',
       },
       {
-        url: 'https://yourwebsite.com',
+        url: 'https://www.example.com',
         label: '<yourwebsite.com>',
         iconType: 'website',
         x: 50,
@@ -52,7 +52,7 @@ export const templates: Template[] = [
     gradient: 'sunset',
     qrBlocks: [
       {
-        url: 'https://instagram.com/yourhandle',
+        url: 'https://www.instagram.com/yourhandle',
         label: '@yourhandle',
         iconType: 'instagram',
         x: 50,
@@ -62,7 +62,7 @@ export const templates: Template[] = [
         errorCorrection: 'H',
       },
       {
-        url: 'https://tiktok.com/@yourhandle',
+        url: 'https://www.tiktok.com/@yourhandle',
         label: '@yourhandle',
         iconType: 'tiktok',
         x: 50,
@@ -87,7 +87,7 @@ export const templates: Template[] = [
     gradient: 'midnight',
     qrBlocks: [
       {
-        url: 'https://linkedin.com/in/yourname',
+        url: 'https://www.linkedin.com/in/yourname',
         label: 'LinkedIn Profile',
         iconType: 'linkedin',
         x: 50,
@@ -97,7 +97,7 @@ export const templates: Template[] = [
         errorCorrection: 'H',
       },
       {
-        url: 'https://portfolio.com',
+        url: 'https://www.example.com',
         label: 'Portfolio',
         iconType: 'website',
         x: 50,
