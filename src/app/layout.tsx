@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Manrope, Outfit, Sora, JetBrains_Mono } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import Script from 'next/script'
+import { Analytics } from '@vercel/analytics/next'
 import { validateEnv } from '@/lib/env'
 import { CookieNotice } from '@/components/CookieNotice'
 import './globals.css'
@@ -130,6 +131,7 @@ export default function RootLayout({
           )}
           {children}
           <CookieNotice />
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
