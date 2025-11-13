@@ -33,6 +33,11 @@ export function Footer() {
                   Home
                 </Link>
               </li>
+              <li>
+                <Link href="/cookies" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors text-sm">
+                  Cookie Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
