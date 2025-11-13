@@ -23,7 +23,7 @@ export function StepQR() {
       iconType: 'website',
       x: 50,
       y: qrBlocks.length === 0 ? 40 : 70,
-      size: 563,
+      size: Math.min(563, 650), // Ensure size stays within backend validation limit
       color: '#000000',
       errorCorrection: 'H',
     }

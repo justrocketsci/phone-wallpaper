@@ -14,7 +14,7 @@ const QRBlockSchema = z.object({
   label: z.string().min(1, 'Label required').max(50, 'Label too long (max 50 chars)'),
   x: z.number().min(0).max(100),
   y: z.number().min(0).max(100),
-  size: z.number().min(50).max(500),
+  size: z.number().min(50).max(650),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format'),
   errorCorrection: z.enum(['L', 'M', 'Q', 'H']),
   iconType: z.enum(['youtube', 'website', 'instagram', 'twitter', 'linkedin', 'tiktok', 'github', 'custom']).optional(),

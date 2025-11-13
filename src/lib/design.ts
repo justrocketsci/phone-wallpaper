@@ -38,8 +38,16 @@ export async function saveDesign(
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.error || 'Failed to save design')
+    let errorMessage = 'Failed to save design'
+    try {
+      const error = await response.json()
+      errorMessage = error.error || errorMessage
+    } catch {
+      // If response is not JSON, try to get text
+      const text = await response.text()
+      errorMessage = text || errorMessage
+    }
+    throw new Error(errorMessage)
   }
 
   const { design } = await response.json()
@@ -66,8 +74,16 @@ export async function updateDesign(
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.error || 'Failed to update design')
+    let errorMessage = 'Failed to update design'
+    try {
+      const error = await response.json()
+      errorMessage = error.error || errorMessage
+    } catch {
+      // If response is not JSON, try to get text
+      const text = await response.text()
+      errorMessage = text || errorMessage
+    }
+    throw new Error(errorMessage)
   }
 
   const { design } = await response.json()
@@ -81,8 +97,16 @@ export async function loadDesign(id: string): Promise<Design> {
   const response = await fetch(`/api/designs/${id}`)
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.error || 'Failed to load design')
+    let errorMessage = 'Failed to load design'
+    try {
+      const error = await response.json()
+      errorMessage = error.error || errorMessage
+    } catch {
+      // If response is not JSON, try to get text
+      const text = await response.text()
+      errorMessage = text || errorMessage
+    }
+    throw new Error(errorMessage)
   }
 
   const { design } = await response.json()
@@ -96,8 +120,16 @@ export async function getDesigns(): Promise<Design[]> {
   const response = await fetch('/api/designs')
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.error || 'Failed to fetch designs')
+    let errorMessage = 'Failed to fetch designs'
+    try {
+      const error = await response.json()
+      errorMessage = error.error || errorMessage
+    } catch {
+      // If response is not JSON, try to get text
+      const text = await response.text()
+      errorMessage = text || errorMessage
+    }
+    throw new Error(errorMessage)
   }
 
   const { designs } = await response.json()
@@ -113,8 +145,16 @@ export async function deleteDesign(id: string): Promise<void> {
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.error || 'Failed to delete design')
+    let errorMessage = 'Failed to delete design'
+    try {
+      const error = await response.json()
+      errorMessage = error.error || errorMessage
+    } catch {
+      // If response is not JSON, try to get text
+      const text = await response.text()
+      errorMessage = text || errorMessage
+    }
+    throw new Error(errorMessage)
   }
 }
 
