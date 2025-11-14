@@ -59,7 +59,7 @@ export function FAQ() {
   }
 
   return (
-    <section className="relative py-24 bg-white dark:bg-slate-900">
+    <section id="faq" className="relative py-24 bg-white dark:bg-slate-900">
       <div className="max-w-4xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -103,19 +103,6 @@ export function FAQ() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* CTA */}
-        <div className="mt-12 text-center">
-          <p className="text-slate-600 dark:text-slate-400 mb-4">
-            Still have questions?
-          </p>
-          <a
-            href="mailto:support@qrcanvas.app"
-            className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold transition-colors"
-          >
-            Contact our support team
-          </a>
         </div>
       </div>
     </section>

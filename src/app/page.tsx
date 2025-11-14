@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 import { Navigation } from '@/components/LandingPage/Navigation'
 import { Hero } from '@/components/LandingPage/Hero'
+import { Pricing } from '@/components/LandingPage/Pricing'
 import { FAQ } from '@/components/LandingPage/FAQ'
 import { Footer } from '@/components/LandingPage/Footer'
 
@@ -47,7 +48,7 @@ export default async function Home() {
     operatingSystem: 'Web',
     offers: {
       '@type': 'Offer',
-      price: '3.95',
+      price: '1.97',
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       priceValidUntil: '2026-12-31',
@@ -73,6 +74,7 @@ export default async function Home() {
       />
       <Navigation />
       <Hero />
+      <Pricing />
       <FAQ />
       <Footer />
     </div>

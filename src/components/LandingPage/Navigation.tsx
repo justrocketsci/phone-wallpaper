@@ -9,7 +9,7 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1">
             <SignedOut>
               <Link href="/" className="flex items-center gap-3">
                 <Image 
@@ -40,8 +40,26 @@ export function Navigation() {
             </SignedIn>
           </div>
 
+          {/* Center Navigation - Only show when signed out (on landing page) */}
+          <SignedOut>
+            <div className="hidden md:flex items-center gap-8">
+              <a 
+                href="#pricing" 
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
+              >
+                Pricing
+              </a>
+              <a 
+                href="#faq" 
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
+              >
+                FAQ
+              </a>
+            </div>
+          </SignedOut>
+
           {/* Auth Buttons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1 justify-end">
             <SignedOut>
               <Button asChild variant="ghost">
                 <Link href="/sign-in">

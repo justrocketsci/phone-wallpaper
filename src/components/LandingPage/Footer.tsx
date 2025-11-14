@@ -5,7 +5,7 @@ export function Footer() {
 
   return (
     <footer className="relative z-10 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand */}
           <div>
@@ -64,7 +64,7 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+        <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
           <p className="text-center text-slate-600 dark:text-slate-400 text-sm">
             © {currentYear} QR Canvas. All rights reserved.
           </p>
