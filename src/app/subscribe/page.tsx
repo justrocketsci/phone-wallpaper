@@ -52,12 +52,36 @@ export default function SubscribePage() {
 
           {/* Pricing Card */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 mb-6 border border-blue-200 dark:border-blue-800">
-            <div className="text-center mb-6">
-              <div className="flex items-baseline justify-center gap-1">
+            {/* Launch Offer Badges */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="bg-gradient-to-r from-orange-400 to-yellow-400 text-slate-900 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                🎉 Launch Offer
+              </div>
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                50% OFF
+              </div>
+            </div>
+
+            {/* Discounted Pricing */}
+            <div className="text-center mb-4">
+              <div className="flex items-baseline justify-center gap-1 mb-1">
                 <span className="text-5xl font-bold text-slate-900 dark:text-white">
-                  $3.95
+                  $1.97
                 </span>
                 <span className="text-slate-600 dark:text-slate-400">/month</span>
+              </div>
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <span className="text-base text-slate-400 dark:text-slate-500 line-through">
+                  $3.95
+                </span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">
+                  /month
+                </span>
+              </div>
+              <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg px-3 py-1.5 inline-block">
+                <p className="text-xs font-semibold text-orange-700 dark:text-orange-400">
+                  ⚡ Limited time offer - Lock in this rate forever
+                </p>
               </div>
             </div>
 
@@ -79,7 +103,7 @@ export default function SubscribePage() {
                 <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                All gradient backgrounds
+                Premium gradient backgrounds
               </li>
               <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
                 <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,6 +116,12 @@ export default function SubscribePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 High-resolution PNG exports
+              </li>
+              <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Save up to 10 designs
               </li>
               <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
                 <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
