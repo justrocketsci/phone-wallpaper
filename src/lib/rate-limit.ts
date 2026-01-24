@@ -18,29 +18,24 @@ const getRateLimiter = (
   const upstashUrl = process.env.UPSTASH_REDIS_REST_URL
   const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN
 
-  if (upstashUrl && upstashToken) {
-    // Use Redis-based rate limiting for production
-    const redis = new Redis({
-      url: upstashUrl,
-      token: upstashToken,
-    })
-
-    return new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(requests, window),
-      analytics: true,
-      prefix: '@ratelimit',
-    })
+  if (!upstashUrl || !upstashToken) {
+    // No Redis configured - disable rate limiting in development
+    // Rate limiting will be skipped (checkRateLimit returns success: true when limiter is null)
+    console.warn('Rate limiting disabled: UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN not configured')
+    return null
   }
 
-  // Use in-memory rate limiting for development/small deployments
-  // Note: In-memory won't work across multiple instances
+  // Use Redis-based rate limiting for production
+  const redis = new Redis({
+    url: upstashUrl,
+    token: upstashToken,
+  })
+
   return new Ratelimit({
-    redis: Redis.fromEnv() as any, // Type workaround for in-memory
+    redis,
     limiter: Ratelimit.slidingWindow(requests, window),
-    analytics: false, // Disable analytics for in-memory
+    analytics: true,
     prefix: '@ratelimit',
-    ephemeralCache: new Map(), // In-memory cache
   })
 }
 

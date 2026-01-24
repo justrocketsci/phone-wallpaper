@@ -8,36 +8,67 @@ generator client {
 }
 
 model User {
-  id                String    @id @default(cuid())
-  clerkId           String    @unique
-  email             String    @unique
-  name              String?
-  
-  // Subscription fields
-  stripeCustomerId  String?   @unique
-  stripeSubscriptionId String? @unique
-  subscriptionStatus String?  // active, canceled, past_due, etc.
-  subscriptionEndsAt DateTime?
-  
+  id                    String    @id @default(cuid())
+  clerkId               String    @unique
+  email                 String    @unique
+  name                  String?
+
+  // Stripe customer ID (for payment history)
+  stripeCustomerId      String?   @unique
+
+  // Credit system
+  downloadCredits       Int       @default(1)  // New users get 1 free credit
+  totalCreditsPurchased Int       @default(0)
+
   // Relations
-  designs           Design[]
-  
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  designs               Design[]
+  creditPurchases       CreditPurchase[]
+  creditUsages          CreditUsage[]
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 }
 
 model Design {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   name        String
   settings    Json     // Stores device, gradient, qrBlocks, typography
   thumbnail   String?  // Optional base64 thumbnail for grid view
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
+  @@index([userId])
+}
+
+model CreditPurchase {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripeSessionId String   @unique
+  credits         Int
+  amountPaid      Int      // Amount in cents
+  status          String   // completed, refunded
+
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+}
+
+model CreditUsage {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  creditsUsed Int      @default(1)
+  action      String   // 'export_png'
+
+  createdAt   DateTime @default(now())
+
   @@index([userId])
 }
 

@@ -8,11 +8,11 @@ import Image from 'next/image'
 import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
 import { DesignGrid } from '@/components/Dashboard/DesignGrid'
 import { Design, getDesigns, deleteDesign } from '@/lib/design'
-import { useSubscription } from '@/hooks/useSubscription'
+import { useCredits } from '@/hooks/useCredits'
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser()
-  const { isActive: isSubscribed } = useSubscription()
+  const { credits } = useCredits()
   const router = useRouter()
   const [designs, setDesigns] = useState<Design[]>([])
   const [loading, setLoading] = useState(true)
@@ -101,10 +101,10 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-3">
-                <Image 
-                  src="/product-logo.svg" 
-                  alt="QR Canvas Logo" 
-                  width={32} 
+                <Image
+                  src="/product-logo.svg"
+                  alt="QR Canvas Logo"
+                  width={32}
                   height={32}
                   className="w-8 h-8"
                 />
@@ -125,7 +125,7 @@ export default function DashboardPage() {
         <DashboardHeader
           userName={user.firstName}
           isNewUser={isNewUser}
-          isSubscribed={isSubscribed}
+          credits={credits}
         />
 
         {error && (
@@ -142,10 +142,9 @@ export default function DashboardPage() {
             </h2>
           </div>
         )}
-        
+
         <DesignGrid designs={designs} onDelete={handleDeleteDesign} />
       </main>
     </div>
   )
 }
-

@@ -6,13 +6,13 @@ import { ExportBar } from '../ExportBar'
 import { useRef, useEffect, useState } from 'react'
 
 interface PreviewPhoneProps {
-  isSubscribed: boolean
+  credits: number
   showWatermark: boolean
   onSave?: () => void
   isSaving?: boolean
 }
 
-export function PreviewPhone({ isSubscribed, showWatermark, onSave, isSaving }: PreviewPhoneProps) {
+export function PreviewPhone({ credits, showWatermark, onSave, isSaving }: PreviewPhoneProps) {
   const { device } = useWallpaperStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 276, height: 600 })
@@ -71,13 +71,12 @@ export function PreviewPhone({ isSubscribed, showWatermark, onSave, isSaving }: 
           height={device.height}
           displayWidth={dimensions.width}
           displayHeight={dimensions.height}
-          isSubscribed={isSubscribed}
+          credits={credits}
           showWatermark={showWatermark}
         />
       </div>
 
-      <ExportBar isSubscribed={isSubscribed} onSave={onSave} isSaving={isSaving} />
+      <ExportBar credits={credits} onSave={onSave} isSaving={isSaving} />
     </div>
   )
 }
-

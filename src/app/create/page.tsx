@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 import WallpaperCreator from '@/components/WallpaperCreator'
-import { getUserSubscription } from '@/lib/subscription'
+import { getUserCredits } from '@/lib/credits'
 
 export const metadata: Metadata = {
   title: 'Create Wallpaper',
@@ -24,7 +24,7 @@ export default async function CreatePage({
     redirect('/sign-in')
   }
 
-  const subscription = await getUserSubscription()
+  const creditsInfo = await getUserCredits()
   const params = await searchParams
 
   return (
@@ -32,9 +32,8 @@ export default async function CreatePage({
       <WallpaperCreator
         templateId={params.template}
         designId={params.design}
-        isSubscribed={subscription?.isActive || false}
+        credits={creditsInfo?.credits || 0}
       />
     </main>
   )
 }
-

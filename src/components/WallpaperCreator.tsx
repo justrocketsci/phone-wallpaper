@@ -9,14 +9,13 @@ import { ActionMenu } from './ActionMenu'
 import { useWallpaperStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ArrowLeft, Check } from 'lucide-react'
+import { ArrowLeft, Check, Coins } from 'lucide-react'
 import {
   loadDesign,
   updateDesign,
   saveDesign,
   generateDesignName,
   generateThumbnail,
-  getTemplateSettings,
 } from '@/lib/design'
 import { exportWallpaperAsPNG } from '@/lib/export'
 import { templates } from '@/data/templates'
@@ -26,13 +25,13 @@ import devices from '@/data/devices.json'
 interface WallpaperCreatorProps {
   templateId?: string
   designId?: string
-  isSubscribed: boolean
+  credits: number
 }
 
 export default function WallpaperCreator({
   templateId,
   designId,
-  isSubscribed,
+  credits: initialCredits,
 }: WallpaperCreatorProps) {
   const router = useRouter()
   const [currentDesignId, setCurrentDesignId] = useState<string | null>(
@@ -47,6 +46,9 @@ export default function WallpaperCreator({
   const [upgradeFeature, setUpgradeFeature] = useState<string | undefined>(undefined)
   const [designCount, setDesignCount] = useState<number | null>(null)
   const [showWatermark, setShowWatermark] = useState(false)
+  const [credits, setCredits] = useState(initialCredits)
+
+  const hasCredits = credits > 0
 
   const {
     loadFromDesign,
@@ -57,11 +59,9 @@ export default function WallpaperCreator({
     addQRBlock,
   } = useWallpaperStore()
 
-  // Fetch design count for subscribed users
+  // Fetch design count
   useEffect(() => {
     const fetchDesignCount = async () => {
-      if (!isSubscribed) return
-
       try {
         const response = await fetch('/api/designs')
         const data = await response.json()
@@ -72,7 +72,7 @@ export default function WallpaperCreator({
     }
 
     fetchDesignCount()
-  }, [isSubscribed, currentDesignId]) // Refetch when a new design is saved
+  }, [currentDesignId])
 
   // Load design or template on mount
   useEffect(() => {
@@ -81,35 +81,28 @@ export default function WallpaperCreator({
         setIsLoading(true)
 
         if (designId) {
-          // Only load from server if we don't already have this design loaded
-          // This prevents reloading when the URL is updated after save
           if (currentDesignId !== designId) {
-            // Load existing design
             const design = await loadDesign(designId)
             loadFromDesign(design.settings)
             setDesignName(design.name)
             setCurrentDesignId(design.id)
           }
         } else if (templateId) {
-          // Load template
           const template = templates.find((t) => t.id === templateId)
           if (template) {
             resetStore()
 
-            // Set gradient
             const gradientData = gradients.find((g) => g.id === template.gradient)
             if (gradientData) {
               setGradient(gradientData)
             }
 
-            // Set default device (iPhone 15 Pro or first available)
             const defaultDevice =
               devices.find((d) => d.model === 'iPhone 15 Pro') || devices[0]
             if (defaultDevice) {
               setDevice(defaultDevice)
             }
 
-            // Add QR blocks from template
             template.qrBlocks.forEach((block, index) => {
               addQRBlock({
                 ...block,
@@ -117,11 +110,9 @@ export default function WallpaperCreator({
               })
             })
 
-            // Set generated name
             setDesignName(generateDesignName())
           }
         } else {
-          // Fresh start - only reset if we don't have a current design
           if (!currentDesignId) {
             resetStore()
             setDesignName(generateDesignName())
@@ -138,7 +129,7 @@ export default function WallpaperCreator({
     loadInitialData()
   }, [designId, templateId])
 
-  // Auto-save function
+  // Auto-save function (saves are free for all users)
   const performSave = useCallback(async () => {
     if (isSaving) return
 
@@ -150,24 +141,20 @@ export default function WallpaperCreator({
       const thumbnail = generateThumbnail(settings)
 
       if (currentDesignId) {
-        // Update existing design
         await updateDesign(currentDesignId, {
           name: designName,
           settings,
           thumbnail,
         })
       } else {
-        // Create new design
         const newDesign = await saveDesign(designName, settings, thumbnail)
         setCurrentDesignId(newDesign.id)
-        // Update URL to reflect the new design ID
         router.replace(`/create?design=${newDesign.id}`)
       }
 
       setLastSaved(new Date())
     } catch (error: any) {
       console.error('Failed to save design:', error)
-      // Extract error message from API response
       const errorMessage = error?.message || 'Failed to save'
       setSaveError(errorMessage)
     } finally {
@@ -181,14 +168,8 @@ export default function WallpaperCreator({
     router,
   ])
 
-  // Manual save handler
+  // Manual save handler (saves are free)
   const handleSave = () => {
-    // Show upgrade modal if not subscribed
-    if (!isSubscribed) {
-      setUpgradeFeature('Save to Account')
-      setShowUpgradeModal(true)
-      return
-    }
     performSave()
   }
 
@@ -200,11 +181,31 @@ export default function WallpaperCreator({
       return
     }
 
+    // Check if user has credits
+    if (!hasCredits) {
+      setUpgradeFeature('Export PNG')
+      setShowUpgradeModal(true)
+      return
+    }
+
     try {
       await exportWallpaperAsPNG()
-    } catch (error) {
+      // Refresh credits after successful export
+      const response = await fetch('/api/credits')
+      const data = await response.json()
+      setCredits(data.credits || 0)
+    } catch (error: any) {
       console.error('Export failed:', error)
-      setSaveError('Failed to export wallpaper')
+      if (error.message === 'INSUFFICIENT_CREDITS') {
+        setUpgradeFeature('Export PNG')
+        setShowUpgradeModal(true)
+        // Refresh credits to ensure UI is in sync
+        const response = await fetch('/api/credits')
+        const data = await response.json()
+        setCredits(data.credits || 0)
+      } else {
+        setSaveError('Failed to export wallpaper')
+      }
     }
   }
 
@@ -216,26 +217,22 @@ export default function WallpaperCreator({
 
   // Handler for when user reaches Step 3
   const handleStep3Reached = () => {
-    if (!isSubscribed) {
+    if (!hasCredits) {
       setShowWatermark(true)
     }
   }
 
-  // Auto-save every 30 seconds
+  // Auto-save every 30 seconds (saves are free for everyone)
   useEffect(() => {
-    // Don't auto-save for non-subscribers
-    if (!isSubscribed) return
-
     const interval = setInterval(() => {
       const state = getSerializableState()
-      // Only auto-save if there's actual content
       if (state.device && state.gradient && state.qrBlocks.length > 0) {
         performSave()
       }
-    }, 30000) // 30 seconds
+    }, 30000)
 
     return () => clearInterval(interval)
-  }, [performSave, getSerializableState, isSubscribed])
+  }, [performSave, getSerializableState])
 
   if (isLoading) {
     return (
@@ -270,50 +267,46 @@ export default function WallpaperCreator({
         </div>
 
         <div className="flex items-center gap-4">
-          {!isSubscribed ? (
-            /* Non-Subscriber: Show ActionMenu dropdown */
-            <ActionMenu
-              isSubscribed={isSubscribed}
-              onSaveToAccount={handleSave}
-              onExportPNG={handleExportPNG}
-              canExport={!!(getSerializableState().device && getSerializableState().gradient && getSerializableState().qrBlocks.length > 0)}
-              onShowUpgrade={handleShowUpgrade}
-            />
-          ) : (
-            /* Subscriber: Show design count and auto-save status */
-            <>
-              {designCount !== null && (
-                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  {designCount}/10 designs
-                </div>
-              )}
+          {/* Credit balance badge */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-full">
+            <Coins className="w-4 h-4 text-amber-500" />
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              {credits} {credits === 1 ? 'credit' : 'credits'}
+            </span>
+          </div>
 
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                {isSaving ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    Saving...
-                  </span>
-                ) : saveError ? (
-                  <span className="text-red-600 dark:text-red-400">{saveError}</span>
-                ) : lastSaved ? (
-                  <span className="flex items-center gap-1.5">
-                    <Check className="w-4 h-4 text-green-500" />
-                    Auto-saved {lastSaved.toLocaleTimeString()}
-                  </span>
-                ) : null}
-              </div>
-
-              {/* Action menu for subscribers (simpler version) */}
-              <ActionMenu
-                isSubscribed={isSubscribed}
-                onSaveToAccount={handleSave}
-                onExportPNG={handleExportPNG}
-                canExport={!!(getSerializableState().device && getSerializableState().gradient && getSerializableState().qrBlocks.length > 0)}
-                onShowUpgrade={handleShowUpgrade}
-              />
-            </>
+          {/* Design count */}
+          {designCount !== null && (
+            <div className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              {designCount}/10 designs
+            </div>
           )}
+
+          {/* Save status */}
+          <div className="text-sm text-slate-600 dark:text-slate-400">
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                Saving...
+              </span>
+            ) : saveError ? (
+              <span className="text-red-600 dark:text-red-400">{saveError}</span>
+            ) : lastSaved ? (
+              <span className="flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-green-500" />
+                Saved {lastSaved.toLocaleTimeString()}
+              </span>
+            ) : null}
+          </div>
+
+          {/* Action menu */}
+          <ActionMenu
+            credits={credits}
+            onSaveToAccount={handleSave}
+            onExportPNG={handleExportPNG}
+            canExport={!!(getSerializableState().device && getSerializableState().gradient && getSerializableState().qrBlocks.length > 0)}
+            onShowUpgrade={handleShowUpgrade}
+          />
         </div>
       </div>
 
@@ -321,9 +314,9 @@ export default function WallpaperCreator({
       <div className="flex flex-1 overflow-hidden">
         <Sidebar onStep3Reached={handleStep3Reached} />
         <div className="flex-1 flex items-center justify-center p-8">
-          <PreviewPhone 
-            isSubscribed={isSubscribed} 
-            showWatermark={showWatermark}
+          <PreviewPhone
+            credits={credits}
+            showWatermark={showWatermark && !hasCredits}
             onSave={handleSave}
             isSaving={isSaving}
           />
@@ -331,15 +324,15 @@ export default function WallpaperCreator({
       </div>
 
       {/* Upgrade Modal */}
-      <UpgradeModal 
-        isOpen={showUpgradeModal} 
+      <UpgradeModal
+        isOpen={showUpgradeModal}
         onClose={() => {
           setShowUpgradeModal(false)
           setUpgradeFeature(undefined)
         }}
         feature={upgradeFeature}
+        currentCredits={credits}
       />
     </div>
   )
 }
-

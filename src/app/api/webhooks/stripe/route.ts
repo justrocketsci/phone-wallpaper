@@ -4,20 +4,6 @@ import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/db'
 
-// Helper function to get current period end from subscription items
-function getCurrentPeriodEnd(subscription: Stripe.Subscription): number | null {
-  const items = subscription.items?.data ?? []
-  if (items.length === 0) return null
-  
-  let maxPeriodEnd = items[0].current_period_end
-  for (const item of items) {
-    if (item.current_period_end > maxPeriodEnd) {
-      maxPeriodEnd = item.current_period_end
-    }
-  }
-  return maxPeriodEnd
-}
-
 export async function POST(req: Request) {
   const body = await req.text()
   const signature = (await headers()).get('Stripe-Signature') as string
@@ -35,89 +21,130 @@ export async function POST(req: Request) {
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 })
   }
 
-  const session = event.data.object as Stripe.Checkout.Session
-  const subscription = event.data.object as Stripe.Subscription
-
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
-        if (!session.customer || !session.subscription) {
-          return new NextResponse('Missing customer or subscription', { status: 400 })
+        const session = event.data.object as Stripe.Checkout.Session
+
+        // Only process one-time payments (not subscriptions)
+        if (session.mode !== 'payment') {
+          console.log('Skipping non-payment checkout session')
+          break
+        }
+
+        if (!session.customer) {
+          return new NextResponse('Missing customer', { status: 400 })
         }
 
         const clerkId = session.metadata?.clerkId
+        const creditsStr = session.metadata?.credits
 
-        if (!clerkId) {
-          return new NextResponse('Missing clerkId in metadata', { status: 400 })
+        if (!clerkId || !creditsStr) {
+          return new NextResponse('Missing clerkId or credits in metadata', { status: 400 })
         }
 
-        // Update user with subscription info
-        await prisma.user.update({
+        const credits = parseInt(creditsStr, 10)
+
+        if (isNaN(credits) || credits <= 0) {
+          return new NextResponse('Invalid credits value', { status: 400 })
+        }
+
+        // Find user by clerkId
+        const user = await prisma.user.findUnique({
           where: { clerkId },
-          data: {
-            stripeCustomerId: session.customer as string,
-            stripeSubscriptionId: session.subscription as string,
-            subscriptionStatus: 'active',
-          },
-        })
-
-        break
-      }
-
-      case 'customer.subscription.updated': {
-        if (!subscription.customer) {
-          return new NextResponse('Missing customer', { status: 400 })
-        }
-
-        // Find user by Stripe customer ID
-        const user = await prisma.user.findUnique({
-          where: { stripeCustomerId: subscription.customer as string },
         })
 
         if (!user) {
           return new NextResponse('User not found', { status: 404 })
         }
 
-        // Update subscription status
-        const currentPeriodEnd = getCurrentPeriodEnd(subscription)
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            subscriptionStatus: subscription.status,
-            subscriptionEndsAt: subscription.cancel_at
-              ? new Date(subscription.cancel_at * 1000)
-              : currentPeriodEnd
-              ? new Date(currentPeriodEnd * 1000)
-              : null,
-          },
+        // Check if this session was already processed (idempotency)
+        const existingPurchase = await prisma.creditPurchase.findUnique({
+          where: { stripeSessionId: session.id },
         })
 
+        if (existingPurchase) {
+          console.log('Credit purchase already processed for session:', session.id)
+          break
+        }
+
+        // Add credits to user and create purchase record in a transaction
+        await prisma.$transaction([
+          // Increment user's credits
+          prisma.user.update({
+            where: { id: user.id },
+            data: {
+              downloadCredits: { increment: credits },
+              totalCreditsPurchased: { increment: credits },
+              stripeCustomerId: session.customer as string,
+            },
+          }),
+          // Create purchase record
+          prisma.creditPurchase.create({
+            data: {
+              userId: user.id,
+              stripeSessionId: session.id,
+              credits,
+              amountPaid: session.amount_total || 0,
+              status: 'completed',
+            },
+          }),
+        ])
+
+        console.log(`Added ${credits} credits to user ${user.email}`)
         break
       }
 
-      case 'customer.subscription.deleted': {
-        if (!subscription.customer) {
-          return new NextResponse('Missing customer', { status: 400 })
+      // Handle refunds - deduct credits if payment is refunded
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge
+
+        // Find the checkout session associated with this charge
+        if (!charge.payment_intent) {
+          break
         }
 
-        // Find user by Stripe customer ID
-        const user = await prisma.user.findUnique({
-          where: { stripeCustomerId: subscription.customer as string },
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          charge.payment_intent as string
+        )
+
+        // Find purchase by looking up sessions with this payment intent
+        const sessions = await stripe.checkout.sessions.list({
+          payment_intent: paymentIntent.id,
+          limit: 1,
         })
 
-        if (!user) {
-          return new NextResponse('User not found', { status: 404 })
+        if (sessions.data.length === 0) {
+          break
         }
 
-        // Update subscription status to canceled
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            subscriptionStatus: 'canceled',
-            subscriptionEndsAt: new Date(subscription.ended_at! * 1000),
-          },
+        const session = sessions.data[0]
+        const purchase = await prisma.creditPurchase.findUnique({
+          where: { stripeSessionId: session.id },
+          include: { user: true },
         })
 
+        if (!purchase || purchase.status === 'refunded') {
+          break
+        }
+
+        // Deduct credits and mark purchase as refunded
+        await prisma.$transaction([
+          prisma.user.update({
+            where: { id: purchase.userId },
+            data: {
+              downloadCredits: {
+                decrement: Math.min(purchase.credits, purchase.user.downloadCredits),
+              },
+            },
+          }),
+          prisma.creditPurchase.update({
+            where: { id: purchase.id },
+            data: { status: 'refunded' },
+          }),
+        ])
+
+        console.log(`Refunded ${purchase.credits} credits from user ${purchase.user.email}`)
         break
       }
 
@@ -131,4 +158,3 @@ export async function POST(req: Request) {
     return new NextResponse('Webhook handler failed', { status: 500 })
   }
 }
-

@@ -12,7 +12,7 @@ interface WallpaperCanvasProps {
   height: number
   displayWidth: number
   displayHeight: number
-  isSubscribed: boolean
+  credits: number
   showWatermark: boolean
 }
 
@@ -21,9 +21,10 @@ export function WallpaperCanvas({
   height,
   displayWidth,
   displayHeight,
-  isSubscribed,
+  credits,
   showWatermark,
 }: WallpaperCanvasProps) {
+  const hasCredits = credits > 0
   const { device, gradient, qrBlocks, typography } = useWallpaperStore()
   const [qrImages, setQrImages] = useState<{ [key: string]: string }>({})
   const scale = displayWidth / width
@@ -257,8 +258,8 @@ export function WallpaperCanvas({
         </div>
       )}
 
-      {/* Watermark overlay for non-subscribers who reached Step 3 */}
-      {!isSubscribed && showWatermark && (
+      {/* Watermark overlay for users without credits who reached Step 3 */}
+      {!hasCredits && showWatermark && (
         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
           {/* Multiple watermarks evenly distributed vertically */}
           {Array.from({ length: 8 }).map((_, index) => {

@@ -30,12 +30,12 @@ const faqs: FAQItem[] = [
     answer: 'You can add up to 2 QR codes per wallpaper. This allows you to include multiple links - for example, one for your website and another for your Instagram profile. Each QR code is fully customizable and scannable.',
   },
   {
-    question: 'What happens if I cancel my subscription?',
-    answer: 'If you cancel your subscription, you\'ll retain access to all premium features until the end of your current billing period. After that, you can still view your saved designs, but you won\'t be able to export new wallpapers until you resubscribe. All your designs remain saved in your account.',
+    question: 'How do credits work?',
+    answer: 'Credits are used to download your wallpapers. Each PNG export costs 1 credit. New users get 1 free credit to try the service. You can purchase credit packs anytime - credits never expire, so you can use them whenever you\'re ready.',
   },
   {
     question: 'Can I download my wallpapers?',
-    answer: 'Yes! With a subscription, you can export unlimited high-resolution PNG wallpapers optimized for your specific device. Each export is created at the exact resolution needed for a perfect fit on your phone.',
+    answer: 'Yes! Each wallpaper download costs 1 credit and exports a high-resolution PNG optimized for your specific device. Saving designs to your account is free and unlimited - you only use credits when you\'re ready to download.',
   },
   {
     question: 'What formats are supported?',

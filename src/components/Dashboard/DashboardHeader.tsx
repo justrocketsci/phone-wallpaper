@@ -2,15 +2,17 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Plus, Check, CheckCircle } from 'lucide-react'
+import { Plus, Coins, CheckCircle } from 'lucide-react'
 
 interface DashboardHeaderProps {
   userName?: string | null
   isNewUser: boolean
-  isSubscribed: boolean
+  credits: number
 }
 
-export function DashboardHeader({ userName, isNewUser, isSubscribed }: DashboardHeaderProps) {
+export function DashboardHeader({ userName, isNewUser, credits }: DashboardHeaderProps) {
+  const hasCredits = credits > 0
+
   return (
     <div className="mb-8">
       {/* Welcome Message */}
@@ -40,19 +42,27 @@ export function DashboardHeader({ userName, isNewUser, isSubscribed }: Dashboard
           </Button>
         </div>
 
-        {/* Subscription Status */}
-        <div className="flex items-center gap-2">
-          {isSubscribed ? (
-            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-              <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
-              <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                Premium Active
-              </span>
-            </div>
-          ) : (
+        {/* Credit Balance */}
+        <div className="flex items-center gap-3">
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+            hasCredits
+              ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+              : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700'
+          }`}>
+            <Coins className={`w-5 h-5 ${hasCredits ? 'text-green-600 dark:text-green-400' : 'text-slate-500 dark:text-slate-400'}`} />
+            <span className={`text-sm font-medium ${
+              hasCredits
+                ? 'text-green-700 dark:text-green-300'
+                : 'text-slate-600 dark:text-slate-400'
+            }`}>
+              {credits} {credits === 1 ? 'credit' : 'credits'}
+            </span>
+          </div>
+
+          {!hasCredits && (
             <Button asChild variant="outline" className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30 text-amber-700 dark:text-amber-300">
-              <Link href="/subscribe">
-                Upgrade to Premium
+              <Link href="/purchase">
+                Buy Credits
               </Link>
             </Button>
           )}
@@ -66,7 +76,7 @@ export function DashboardHeader({ userName, isNewUser, isSubscribed }: Dashboard
             🎨 Getting Started
           </h3>
           <p className="text-slate-700 dark:text-slate-300 mb-4">
-            Click &quot;Create New Design&quot; above to start building your first QR code wallpaper. 
+            Click &quot;Create New Design&quot; above to start building your first QR code wallpaper.
             Choose your device, pick a gradient background, add your QR codes, and export!
           </p>
           <div className="flex flex-wrap gap-3 text-sm">
@@ -80,12 +90,14 @@ export function DashboardHeader({ userName, isNewUser, isSubscribed }: Dashboard
             </div>
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
               <CheckCircle className="w-4 h-4" />
-              <span>Export high-res PNG</span>
+              <span>Export high-res PNG (1 credit)</span>
             </div>
           </div>
+          <p className="mt-3 text-sm text-blue-700 dark:text-blue-300">
+            🎁 You have 1 free credit to download your first wallpaper!
+          </p>
         </div>
       )}
     </div>
   )
 }
-
