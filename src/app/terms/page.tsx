@@ -66,81 +66,42 @@ export default function TermsPage() {
                 <li>Create custom QR code wallpapers</li>
                 <li>Choose from various backgrounds and design options</li>
                 <li>Add up to 2 QR codes per wallpaper</li>
-                <li>Export wallpapers in high resolution</li>
-                <li>Save and manage designs (with subscription)</li>
+                <li>Purchase and download wallpapers in high resolution</li>
               </ul>
             </section>
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
-                3. User Accounts
+                3. Age Requirement
               </h2>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                3.1 Account Creation
-              </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                To use certain features of the Service, you must register for an account. You agree to:
-              </p>
-              <ul className="list-disc pl-6 mb-4 text-slate-700 dark:text-slate-300 space-y-2">
-                <li>Provide accurate, current, and complete information</li>
-                <li>Maintain and update your information to keep it accurate</li>
-                <li>Maintain the security of your account credentials</li>
-                <li>Accept responsibility for all activities under your account</li>
-                <li>Notify us immediately of any unauthorized use</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                3.2 Account Restrictions
-              </h3>
-              <p className="text-slate-700 dark:text-slate-300 mb-4">
-                You must be at least 13 years old to use this Service. You may not create an account using false information or on behalf of someone else without permission.
+                You must be at least 13 years old to use this Service.
               </p>
             </section>
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
-                4. Subscription and Billing
+                4. Payments and Downloads
               </h2>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                4.1 Subscription Plans
+                4.1 Pricing
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                QR Canvas offers a monthly subscription plan at $3.95/month that includes:
-              </p>
-              <ul className="list-disc pl-6 mb-4 text-slate-700 dark:text-slate-300 space-y-2">
-                <li>Unlimited wallpaper exports</li>
-                <li>Up to 2 QR codes per wallpaper</li>
-                <li>All gradient backgrounds</li>
-                <li>All device resolutions</li>
-                <li>High-resolution PNG exports</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                4.2 Billing
-              </h3>
-              <p className="text-slate-700 dark:text-slate-300 mb-4">
-                Subscriptions are billed monthly on the date you subscribe. Payments are processed through Stripe. You authorize us to charge your payment method on a recurring basis.
+                Each wallpaper download is available as a one-time purchase at the price displayed at checkout. No account or subscription is required. Payments are processed securely through Stripe.
               </p>
 
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                4.3 Cancellation
+                4.2 Refund Policy
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                You may cancel your subscription at any time through your account settings. Cancellations take effect at the end of the current billing period. No refunds are provided for partial months.
+                Due to the digital nature of the product, refunds are handled on a case-by-case basis. If you experience a technical issue preventing your download, please contact us for assistance.
               </p>
 
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                4.4 Refund Policy
+                4.3 Price Changes
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                We offer a 7-day money-back guarantee for first-time subscribers. Contact us within 7 days of your initial subscription for a full refund. Refunds are not available for recurring monthly payments or after the 7-day period.
-              </p>
-
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                4.5 Price Changes
-              </h3>
-              <p className="text-slate-700 dark:text-slate-300 mb-4">
-                We reserve the right to modify subscription prices. You will be notified of any price changes at least 30 days in advance. Continued use of the Service after the price change constitutes acceptance of the new price.
+                We reserve the right to modify prices at any time. The price at the time of your purchase is the price you pay.
               </p>
             </section>
 

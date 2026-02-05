@@ -30,12 +30,12 @@ const faqs: FAQItem[] = [
     answer: 'You can add up to 2 QR codes per wallpaper. This allows you to include multiple links - for example, one for your website and another for your Instagram profile. Each QR code is fully customizable and scannable.',
   },
   {
-    question: 'How do credits work?',
-    answer: 'Credits are used to download your wallpapers. Each PNG export costs 1 credit. New users get 1 free credit to try the service. You can purchase credit packs anytime - credits never expire, so you can use them whenever you\'re ready.',
+    question: 'How much does it cost?',
+    answer: 'Each wallpaper download is a one-time payment of $1.99. No subscriptions, no accounts required. You design your wallpaper, pay once, and download your high-resolution PNG immediately.',
   },
   {
     question: 'Can I download my wallpapers?',
-    answer: 'Yes! Each wallpaper download costs 1 credit and exports a high-resolution PNG optimized for your specific device. Saving designs to your account is free and unlimited - you only use credits when you\'re ready to download.',
+    answer: 'Yes! After completing your design, click the download button, complete a quick $1.99 payment, and your high-resolution PNG optimized for your specific device will download automatically.',
   },
   {
     question: 'What formats are supported?',

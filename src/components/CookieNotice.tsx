@@ -49,7 +49,7 @@ export function CookieNotice() {
             {/* Message */}
             <div className="flex-1 text-sm text-slate-200">
               <p>
-                We use strictly necessary cookies to provide authentication and payment processing.{' '}
+                We use strictly necessary cookies to provide payment processing and core functionality.{' '}
                 <Link 
                   href="/cookies" 
                   className="text-blue-400 hover:text-blue-300 underline underline-offset-2"

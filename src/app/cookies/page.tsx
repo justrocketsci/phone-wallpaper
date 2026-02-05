@@ -54,30 +54,6 @@ export default function CookiesPage() {
             Cookies we use
           </h2>
 
-          {/* Authentication Cookies */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 mb-6">
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Authentication Cookies (Clerk)
-            </h3>
-            <div className="space-y-3 text-slate-700 dark:text-slate-300">
-              <div>
-                <span className="font-medium">Purpose:</span> To authenticate users and maintain secure login sessions
-              </div>
-              <div>
-                <span className="font-medium">Cookie names:</span> <code className="px-2 py-1 bg-slate-100 dark:bg-slate-900 rounded text-sm">__session</code>, <code className="px-2 py-1 bg-slate-100 dark:bg-slate-900 rounded text-sm">__clerk_db_jwt</code>
-              </div>
-              <div>
-                <span className="font-medium">Duration:</span> Session-based (deleted when you close your browser) or up to 7 days
-              </div>
-              <div>
-                <span className="font-medium">Provider:</span> Clerk (our authentication service)
-              </div>
-              <div>
-                <span className="font-medium">Category:</span> Strictly Necessary
-              </div>
-            </div>
-          </div>
-
           {/* Payment Cookies */}
           <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6">
             <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">

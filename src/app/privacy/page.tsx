@@ -63,13 +63,8 @@ export default function PrivacyPage() {
                 Personal Information
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                When you create an account, we collect:
+                When you make a purchase, Stripe may collect your email address and payment details. We do not require account creation to use the Service.
               </p>
-              <ul className="list-disc pl-6 mb-4 text-slate-700 dark:text-slate-300 space-y-2">
-                <li>Email address</li>
-                <li>Name (first and last)</li>
-                <li>Profile information you choose to provide</li>
-              </ul>
 
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
                 Design Data
@@ -87,7 +82,7 @@ export default function PrivacyPage() {
                 Payment Information
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                For subscription payments, we use Stripe. We do not store your full credit card details. Stripe collects and processes:
+                For payments, we use Stripe. We do not store your full credit card details. Stripe collects and processes:
               </p>
               <ul className="list-disc pl-6 mb-4 text-slate-700 dark:text-slate-300 space-y-2">
                 <li>Payment card information</li>
@@ -116,7 +111,7 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc pl-6 mb-4 text-slate-700 dark:text-slate-300 space-y-2">
                 <li>Provide and maintain our service</li>
-                <li>Process your subscription payments</li>
+                <li>Process your payments</li>
                 <li>Send you service-related notifications</li>
                 <li>Improve and optimize our application</li>
                 <li>Analyze usage patterns and trends</li>
@@ -134,16 +129,6 @@ export default function PrivacyPage() {
                 We use the following third-party services:
               </p>
               
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
-                Clerk (Authentication)
-              </h3>
-              <p className="text-slate-700 dark:text-slate-300 mb-4">
-                We use Clerk for user authentication and account management. Clerk processes your email, name, and authentication data. View their privacy policy at{' '}
-                <a href="https://clerk.com/privacy" className="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">
-                  clerk.com/privacy
-                </a>
-              </p>
-
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6">
                 Stripe (Payments)
               </h3>

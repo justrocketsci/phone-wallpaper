@@ -1,5 +1,3 @@
-import { auth } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 import { Navigation } from '@/components/LandingPage/Navigation'
 import { Hero } from '@/components/LandingPage/Hero'
@@ -31,14 +29,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function Home() {
-  const { userId } = await auth()
-
-  // Redirect signed-in users to dashboard
-  if (userId) {
-    redirect('/dashboard')
-  }
-
+export default function Home() {
   // Structured data for SEO
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -48,7 +39,7 @@ export default async function Home() {
     operatingSystem: 'Web',
     offers: {
       '@type': 'Offer',
-      price: '1.97',
+      price: '1.99',
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       priceValidUntil: '2026-12-31',
@@ -80,4 +71,3 @@ export default async function Home() {
     </div>
   )
 }
-

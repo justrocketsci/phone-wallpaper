@@ -33,14 +33,14 @@ export function Hero() {
             {/* CTA Button */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
               <Button asChild variant="default" size="xl">
-                <Link href="/sign-up">
+                <Link href="/create">
                   Start Creating
                 </Link>
               </Button>
               <Button asChild variant="outline" size="xl" className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border-slate-300 dark:border-slate-600 hover:bg-white/80 dark:hover:bg-slate-800/80">
-                <Link href="/sign-in">
-                  Sign In
-                </Link>
+                <a href="#pricing">
+                  View Pricing
+                </a>
               </Button>
             </div>
           </div>

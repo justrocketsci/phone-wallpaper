@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { StepPhone } from './StepPhone'
 import { StepBackground } from './StepBackground'
 import { StepQR } from './StepQR'
@@ -12,21 +12,8 @@ const steps = [
   { id: 3, title: 'QR Codes', component: StepQR },
 ]
 
-interface SidebarProps {
-  onStep3Reached?: () => void
-}
-
-export function Sidebar({ onStep3Reached }: SidebarProps = {}) {
+export function Sidebar() {
   const [activeStep, setActiveStep] = useState(1)
-  const [hasReachedStep3, setHasReachedStep3] = useState(false)
-
-  // Track when user reaches Step 3
-  useEffect(() => {
-    if (activeStep === 3 && !hasReachedStep3) {
-      setHasReachedStep3(true)
-      onStep3Reached?.()
-    }
-  }, [activeStep, hasReachedStep3, onStep3Reached])
 
   const ActiveComponent = steps[activeStep - 1].component
 
@@ -62,4 +49,3 @@ export function Sidebar({ onStep3Reached }: SidebarProps = {}) {
     </div>
   )
 }
-

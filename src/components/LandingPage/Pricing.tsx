@@ -2,31 +2,13 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 
-const CREDIT_PACKS = [
-  {
-    id: '5',
-    credits: 5,
-    price: '$2.99',
-    pricePerCredit: '$0.60/download',
-    popular: false,
-  },
-  {
-    id: '15',
-    credits: 15,
-    price: '$6.99',
-    pricePerCredit: '$0.47/download',
-    popular: true,
-    savings: 'Save 22%',
-  },
-]
-
 const features = [
-  '1 credit = 1 PNG download',
-  'High-resolution exports',
+  'High-resolution PNG export',
   'All device resolutions',
   'Up to 2 QR codes per wallpaper',
-  'Free design saves (unlimited)',
-  'Credits never expire',
+  'No account needed',
+  'Pay per download',
+  'Secure payment via Stripe',
 ]
 
 export function Pricing() {
@@ -40,73 +22,43 @@ export function Pricing() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-            Pay Per Download
+            Simple Pricing
           </h2>
           <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            No subscription required. Buy credits when you need them, use them whenever you want. Credits never expire.
+            No subscription. No account. Just pay per download.
           </p>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto mb-12">
-          {CREDIT_PACKS.map((pack) => (
-            <div
-              key={pack.id}
-              className={`relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden ${
-                pack.popular
-                  ? 'ring-2 ring-blue-500 dark:ring-blue-400'
-                  : 'border border-slate-200 dark:border-slate-700'
-              }`}
-            >
-              {pack.popular && (
-                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-center py-2 text-sm font-semibold">
-                  Best Value
-                </div>
-              )}
-
-              <div className={`p-8 ${pack.popular ? 'pt-14' : ''}`}>
-                {/* Credits */}
-                <div className="text-center mb-6">
-                  <div className="text-6xl font-bold text-slate-900 dark:text-white mb-2">
-                    {pack.credits}
-                  </div>
-                  <div className="text-xl text-slate-600 dark:text-slate-400">
-                    credits
-                  </div>
-                </div>
-
-                {/* Price */}
-                <div className="text-center mb-6">
-                  <div className="text-4xl font-bold text-slate-900 dark:text-white">
-                    {pack.price}
-                  </div>
-                  <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    {pack.pricePerCredit}
-                  </div>
-                  {pack.savings && (
-                    <div className="mt-3 inline-block bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-4 py-1.5 rounded-full text-sm font-semibold">
-                      {pack.savings}
-                    </div>
-                  )}
-                </div>
-
-                {/* CTA Button */}
-                <Button
-                  asChild
-                  size="xl"
-                  className={`w-full ${
-                    pack.popular
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                      : 'bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600'
-                  } text-white shadow-lg`}
-                >
-                  <Link href="/sign-up">
-                    Buy {pack.credits} Credits
-                  </Link>
-                </Button>
-              </div>
+        {/* Single Pricing Card */}
+        <div className="max-w-md mx-auto mb-12">
+          <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden ring-2 ring-blue-500 dark:ring-blue-400">
+            <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-center py-2 text-sm font-semibold">
+              Per Wallpaper
             </div>
-          ))}
+
+            <div className="p-8 pt-14">
+              {/* Price */}
+              <div className="text-center mb-6">
+                <div className="text-6xl font-bold text-slate-900 dark:text-white mb-2">
+                  $1.99
+                </div>
+                <div className="text-xl text-slate-600 dark:text-slate-400">
+                  per wallpaper download
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <Button
+                asChild
+                size="xl"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+              >
+                <Link href="/create">
+                  Start Creating
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Features List */}
@@ -139,9 +91,9 @@ export function Pricing() {
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span>Credits never expire</span>
+              <span>No account required</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

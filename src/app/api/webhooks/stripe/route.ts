@@ -26,89 +26,48 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Only process one-time payments (not subscriptions)
+        // Only process one-time payments
         if (session.mode !== 'payment') {
           console.log('Skipping non-payment checkout session')
           break
         }
 
-        if (!session.customer) {
-          return new NextResponse('Missing customer', { status: 400 })
-        }
-
-        const clerkId = session.metadata?.clerkId
-        const creditsStr = session.metadata?.credits
-
-        if (!clerkId || !creditsStr) {
-          return new NextResponse('Missing clerkId or credits in metadata', { status: 400 })
-        }
-
-        const credits = parseInt(creditsStr, 10)
-
-        if (isNaN(credits) || credits <= 0) {
-          return new NextResponse('Invalid credits value', { status: 400 })
-        }
-
-        // Find user by clerkId
-        const user = await prisma.user.findUnique({
-          where: { clerkId },
-        })
-
-        if (!user) {
-          return new NextResponse('User not found', { status: 404 })
-        }
-
-        // Check if this session was already processed (idempotency)
-        const existingPurchase = await prisma.creditPurchase.findUnique({
+        // Idempotency: check if purchase already recorded
+        const existing = await prisma.purchase.findUnique({
           where: { stripeSessionId: session.id },
         })
 
-        if (existingPurchase) {
-          console.log('Credit purchase already processed for session:', session.id)
+        if (existing) {
+          console.log('Purchase already recorded for session:', session.id)
           break
         }
 
-        // Add credits to user and create purchase record in a transaction
-        await prisma.$transaction([
-          // Increment user's credits
-          prisma.user.update({
-            where: { id: user.id },
-            data: {
-              downloadCredits: { increment: credits },
-              totalCreditsPurchased: { increment: credits },
-              stripeCustomerId: session.customer as string,
-            },
-          }),
-          // Create purchase record
-          prisma.creditPurchase.create({
-            data: {
-              userId: user.id,
-              stripeSessionId: session.id,
-              credits,
-              amountPaid: session.amount_total || 0,
-              status: 'completed',
-            },
-          }),
-        ])
+        // Create purchase record
+        await prisma.purchase.create({
+          data: {
+            stripeSessionId: session.id,
+            amountPaid: session.amount_total || 0,
+            email: session.customer_details?.email || null,
+            status: 'completed',
+          },
+        })
 
-        console.log(`Added ${credits} credits to user ${user.email}`)
+        console.log(`Purchase recorded for session ${session.id}`)
         break
       }
 
-      // Handle refunds - deduct credits if payment is refunded
       case 'charge.refunded': {
         const charge = event.data.object as Stripe.Charge
 
-        // Find the checkout session associated with this charge
         if (!charge.payment_intent) {
           break
         }
 
+        // Find the checkout session associated with this charge
         const paymentIntent = await stripe.paymentIntents.retrieve(
           charge.payment_intent as string
         )
 
-        // Find purchase by looking up sessions with this payment intent
         const sessions = await stripe.checkout.sessions.list({
           payment_intent: paymentIntent.id,
           limit: 1,
@@ -119,32 +78,21 @@ export async function POST(req: Request) {
         }
 
         const session = sessions.data[0]
-        const purchase = await prisma.creditPurchase.findUnique({
+        const purchase = await prisma.purchase.findUnique({
           where: { stripeSessionId: session.id },
-          include: { user: true },
         })
 
         if (!purchase || purchase.status === 'refunded') {
           break
         }
 
-        // Deduct credits and mark purchase as refunded
-        await prisma.$transaction([
-          prisma.user.update({
-            where: { id: purchase.userId },
-            data: {
-              downloadCredits: {
-                decrement: Math.min(purchase.credits, purchase.user.downloadCredits),
-              },
-            },
-          }),
-          prisma.creditPurchase.update({
-            where: { id: purchase.id },
-            data: { status: 'refunded' },
-          }),
-        ])
+        // Mark purchase as refunded
+        await prisma.purchase.update({
+          where: { id: purchase.id },
+          data: { status: 'refunded' },
+        })
 
-        console.log(`Refunded ${purchase.credits} credits from user ${purchase.user.email}`)
+        console.log(`Purchase refunded for session ${session.id}`)
         break
       }
 

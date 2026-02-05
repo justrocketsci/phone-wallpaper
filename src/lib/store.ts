@@ -95,6 +95,33 @@ const defaultTypography: Typography = {
   textTransform: 'none',
 }
 
+const PENDING_DOWNLOAD_KEY = 'qr-canvas-pending-download'
+
+export function savePendingDownload(): void {
+  const state = useWallpaperStore.getState()
+  const data: SerializableState = {
+    device: state.device,
+    gradient: state.gradient,
+    qrBlocks: state.qrBlocks,
+    typography: state.typography,
+  }
+  localStorage.setItem(PENDING_DOWNLOAD_KEY, JSON.stringify(data))
+}
+
+export function loadPendingDownload(): SerializableState | null {
+  const saved = localStorage.getItem(PENDING_DOWNLOAD_KEY)
+  if (!saved) return null
+  try {
+    return JSON.parse(saved)
+  } catch {
+    return null
+  }
+}
+
+export function clearPendingDownload(): void {
+  localStorage.removeItem(PENDING_DOWNLOAD_KEY)
+}
+
 export const useWallpaperStore = create<WallpaperState>((set, get) => ({
   device: null,
   gradient: null,

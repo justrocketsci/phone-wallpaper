@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Inter, Manrope, Outfit, Sora, JetBrains_Mono } from 'next/font/google'
-import { ClerkProvider } from '@clerk/nextjs'
 import Script from 'next/script'
 import { Analytics } from '@vercel/analytics/next'
 import { validateEnv } from '@/lib/env'
@@ -107,8 +106,7 @@ export default function RootLayout({
   const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
   return (
-    <ClerkProvider>
-      <html lang="en">
+    <html lang="en">
         <body className={`${inter.variable} ${manrope.variable} ${outfit.variable} ${sora.variable} ${jetbrainsMono.variable} font-inter antialiased`}>
           {/* Google Analytics */}
           {GA_ID && (
@@ -134,7 +132,6 @@ export default function RootLayout({
           <Analytics />
         </body>
       </html>
-    </ClerkProvider>
   )
 }
 

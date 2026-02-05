@@ -31,13 +31,13 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://accounts.google.com https://challenges.cloudflare.com https://*.clerk.accounts.dev https://*.clerk.dev https://clerk.qrcanvas.app",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://js.stripe.com",
               "worker-src 'self' blob:",
-              "style-src 'self' 'unsafe-inline' https://accounts.google.com https://*.clerk.accounts.dev https://clerk.qrcanvas.app",
-              "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://*.clerk.accounts.dev https://img.clerk.com https://clerk.qrcanvas.app",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
               "font-src 'self' data:",
-              "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://*.clerk.accounts.dev https://*.clerk.dev https://api.clerk.dev https://api.clerk.com https://api.stripe.com https://clerk.qrcanvas.app",
-              "frame-src 'self' https://challenges.cloudflare.com https://accounts.google.com https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.dev https://clerk.qrcanvas.app",
+              "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://api.stripe.com",
+              "frame-src 'self' https://js.stripe.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
@@ -52,4 +52,3 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
-

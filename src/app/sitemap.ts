@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://qrcanvas.app'
-  
+
   const currentDate = new Date()
-  
+
   return [
     {
       url: baseUrl,
@@ -13,21 +13,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/sign-up`,
+      url: `${baseUrl}/create`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/sign-in`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/subscribe`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
@@ -50,4 +38,3 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 }
-

@@ -4,7 +4,7 @@ import { gradients } from '@/data/gradients'
 import { fonts } from '@/data/fonts'
 
 /**
- * Export wallpaper as PNG (consumes 1 credit)
+ * Export wallpaper as PNG (pure client-side rendering)
  */
 export async function exportWallpaperAsPNG(): Promise<void> {
   const state = useWallpaperStore.getState()
@@ -12,17 +12,6 @@ export async function exportWallpaperAsPNG(): Promise<void> {
 
   if (!device || !gradient) {
     throw new Error('Missing required data for export')
-  }
-
-  // Deduct 1 credit before export
-  const creditResponse = await fetch('/api/use-credit', { method: 'POST' })
-
-  if (!creditResponse.ok) {
-    const data = await creditResponse.json().catch(() => ({}))
-    if (creditResponse.status === 402) {
-      throw new Error('INSUFFICIENT_CREDITS')
-    }
-    throw new Error(data.error || 'Failed to use credit')
   }
 
   // Create a canvas at device resolution

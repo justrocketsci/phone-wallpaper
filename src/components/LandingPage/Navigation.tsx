@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 
 export function Navigation() {
@@ -10,85 +9,46 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
           <div className="flex items-center gap-3 flex-1">
-            <SignedOut>
-              <Link href="/" className="flex items-center gap-3">
-                <Image 
-                  src="/product-logo.svg" 
-                  alt="QR Canvas Logo" 
-                  width={32} 
-                  height={32}
-                  className="w-8 h-8"
-                />
-                <span className="text-xl font-semibold text-slate-900 dark:text-white">
-                  QR Canvas
-                </span>
-              </Link>
-            </SignedOut>
-            <SignedIn>
-              <Link href="/dashboard" className="flex items-center gap-3">
-                <Image 
-                  src="/product-logo.svg" 
-                  alt="QR Canvas Logo" 
-                  width={32} 
-                  height={32}
-                  className="w-8 h-8"
-                />
-                <span className="text-xl font-semibold text-slate-900 dark:text-white">
-                  QR Canvas
-                </span>
-              </Link>
-            </SignedIn>
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/product-logo.svg"
+                alt="QR Canvas Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
+              <span className="text-xl font-semibold text-slate-900 dark:text-white">
+                QR Canvas
+              </span>
+            </Link>
           </div>
 
-          {/* Center Navigation - Only show when signed out (on landing page) */}
-          <SignedOut>
-            <div className="hidden md:flex items-center gap-8">
-              <a 
-                href="#pricing" 
-                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
-              >
-                Pricing
-              </a>
-              <a 
-                href="#faq" 
-                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
-              >
-                FAQ
-              </a>
-            </div>
-          </SignedOut>
+          {/* Center Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            <a
+              href="#pricing"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
+            >
+              Pricing
+            </a>
+            <a
+              href="#faq"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
+            >
+              FAQ
+            </a>
+          </div>
 
-          {/* Auth Buttons */}
+          {/* CTA */}
           <div className="flex items-center gap-4 flex-1 justify-end">
-            <SignedOut>
-              <Button asChild variant="ghost">
-                <Link href="/sign-in">
-                  Sign In
-                </Link>
-              </Button>
-              <Button asChild variant="default" size="md">
-                <Link href="/sign-up">
-                  Get Started
-                </Link>
-              </Button>
-            </SignedOut>
-            <SignedIn>
-              <Button asChild variant="ghost">
-                <Link href="/dashboard">
-                  Dashboard
-                </Link>
-              </Button>
-              <Button asChild variant="default" size="md">
-                <Link href="/create">
-                  Create
-                </Link>
-              </Button>
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
+            <Button asChild variant="default" size="md">
+              <Link href="/create">
+                Start Creating
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
     </nav>
   )
 }
-
