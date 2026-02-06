@@ -23,35 +23,13 @@ DATABASE_URL="postgresql://user:password@localhost:5432/qrcanvas"
 - PostgreSQL connection string for Prisma
 - Format: `postgresql://USER:PASSWORD@HOST:PORT/DATABASE`
 
-### Clerk Authentication
-
-```bash
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
-CLERK_SECRET_KEY=sk_test_xxxxx
-CLERK_WEBHOOK_SECRET=whsec_xxxxx
-```
-
-Get these from [Clerk Dashboard](https://dashboard.clerk.com):
-1. Create an application
-2. Go to "API Keys" section
-3. Copy the publishable and secret keys
-4. For webhook secret, go to "Webhooks" and create an endpoint
-
-**Clerk URLs (already configured):**
-```bash
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
-```
-
 ### Stripe Payments
 
 ```bash
 STRIPE_SECRET_KEY=sk_test_xxxxx
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxx
-STRIPE_PRICE_ID=price_xxxxx
+STRIPE_PRICE_DOWNLOAD=price_xxxxx
 ```
 
 Get these from [Stripe Dashboard](https://dashboard.stripe.com):
@@ -61,13 +39,11 @@ Get these from [Stripe Dashboard](https://dashboard.stripe.com):
    - Create endpoint: `your-domain.com/api/webhooks/stripe`
    - Events to listen for:
      - `checkout.session.completed`
-     - `customer.subscription.created`
-     - `customer.subscription.updated`
-     - `customer.subscription.deleted`
-3. **Price ID:**
+     - `charge.refunded`
+3. **Price ID (STRIPE_PRICE_DOWNLOAD):**
    - Go to Products
-   - Create a product (or use existing)
-   - Create a price ($3.95/month recurring)
+   - Create a product (or use existing) for one-time download
+   - Create a one-time price (e.g. $1.99)
    - Copy the price ID (starts with `price_`)
 
 ---
@@ -91,9 +67,8 @@ UPSTASH_REDIS_REST_TOKEN=your-token-here
 **Note:** Rate limiting works in-memory without Redis, but for production with multiple instances, Redis-based rate limiting is recommended.
 
 **Current Limits:**
-- Design API: 100 requests per 15 minutes per user
-- Checkout API: 10 requests per hour per user
-- General API: 200 requests per 15 minutes per user
+- Checkout API: 10 requests per hour per IP (when Redis configured)
+- General API: 200 requests per 15 minutes (when Redis configured)
 
 ---
 
@@ -154,22 +129,13 @@ Create a `.env.local` file in your project root:
 # Database
 DATABASE_URL="postgresql://user:password@localhost:5432/qrcanvas"
 
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
-CLERK_SECRET_KEY=sk_test_xxxxx
-CLERK_WEBHOOK_SECRET=whsec_xxxxx
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
-
-# Stripe Payments
+# Stripe Payments (one-time download)
 STRIPE_SECRET_KEY=sk_test_xxxxx
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxx
-STRIPE_PRICE_ID=price_xxxxx
+STRIPE_PRICE_DOWNLOAD=price_xxxxx
 
-# SEO Configuration
+# SEO Configuration (optional)
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 
@@ -186,14 +152,12 @@ NEXT_PUBLIC_BING_VERIFICATION=your-code
 ```bash
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 # Use Stripe test keys (sk_test_*, pk_test_*)
-# Use Clerk test keys (pk_test_*, sk_test_*)
 ```
 
 ### Production (via your hosting platform)
 ```bash
 NEXT_PUBLIC_BASE_URL=https://yourdomain.com
 # Use Stripe live keys (sk_live_*, pk_live_*)
-# Use Clerk production keys (pk_live_*, sk_live_*)
 ```
 
 ---
@@ -205,14 +169,10 @@ When deploying to production (Vercel, Netlify, etc.):
 - [ ] Add all environment variables to your hosting platform's settings
 - [ ] Update `NEXT_PUBLIC_BASE_URL` to production domain
 - [ ] Switch to Stripe live keys
-- [ ] Switch to Clerk production keys
-- [ ] Add your production domain to:
-  - [ ] Clerk allowed origins
-  - [ ] Stripe webhook endpoints
-- [ ] Update webhook URLs to production domain
-- [ ] Set up Google Analytics
-- [ ] Verify Google Search Console
-- [ ] Verify Bing Webmaster Tools
+- [ ] Add your production domain to Stripe webhook endpoints
+- [ ] Set up Google Analytics (optional)
+- [ ] Verify Google Search Console (optional)
+- [ ] Verify Bing Webmaster Tools (optional)
 
 ---
 
@@ -238,13 +198,10 @@ npm run dev
 # 2. Check if analytics are working
 # Open browser console and verify Google Analytics loads
 
-# 3. Test authentication
-# Try signing up/in with Clerk
+# 3. Test payments
+# Create a wallpaper, click Download, complete checkout with Stripe test card: 4242 4242 4242 4242
 
-# 4. Test payments
-# Try subscribing with Stripe test card: 4242 4242 4242 4242
-
-# 5. Check SEO metadata
+# 4. Check SEO metadata
 # Visit http://localhost:3000
 # View page source and verify meta tags are present
 ```
@@ -276,7 +233,6 @@ npm run dev
 
 ## Need Help?
 
-- **Clerk Documentation:** https://clerk.com/docs
 - **Stripe Documentation:** https://stripe.com/docs
 - **Next.js Environment Variables:** https://nextjs.org/docs/app/building-your-application/configuring/environment-variables
 - **Google Analytics Setup:** https://support.google.com/analytics

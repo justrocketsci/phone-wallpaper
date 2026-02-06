@@ -58,7 +58,7 @@
 #### 9. Created `src/app/privacy/page.tsx`
 - Complete Privacy Policy page
 - GDPR/CCPA compliant content
-- Details on Clerk & Stripe data handling
+- Details on Stripe data handling
 - User rights and contact information
 
 #### 10. Created `src/app/terms/page.tsx`

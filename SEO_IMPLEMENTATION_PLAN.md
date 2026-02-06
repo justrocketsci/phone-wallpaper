@@ -220,7 +220,7 @@ Add schema script to home page component
 
 **Requirements:**
 - Explain data collection practices
-- Cover Clerk authentication data
+- Cover payment/session data (Stripe)
 - Cover Stripe payment data
 - Detail cookie usage
 - Explain user rights (GDPR/CCPA compliance)
@@ -230,7 +230,7 @@ Add schema script to home page component
 - Introduction
 - Information We Collect
 - How We Use Your Information
-- Third-Party Services (Clerk, Stripe)
+- Third-Party Services (Stripe)
 - Data Security
 - User Rights
 - Contact Information

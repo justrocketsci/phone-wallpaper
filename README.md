@@ -9,9 +9,8 @@ A Next.js web application for creating beautiful QR code wallpapers optimized fo
 - 🔗 Add up to 2 QR codes with custom URLs
 - 🎯 Brand icons (built-in library + custom upload)
 - ✍️ Wallpaper-optimized typography
-- 📤 Export at exact device resolution
-- 💳 Stripe subscription integration
-- 🔐 Clerk authentication
+- 📤 Export at exact device resolution (one-time payment per download)
+- 💳 Stripe one-time payment for PNG download
 - 🔍 SEO optimized with structured data
 
 ## 🛠 Tech Stack
@@ -20,8 +19,7 @@ A Next.js web application for creating beautiful QR code wallpapers optimized fo
 - **Styling:** Tailwind CSS
 - **State Management:** Zustand
 - **QR Generation:** QRCode.js
-- **Authentication:** Clerk
-- **Payments:** Stripe
+- **Payments:** Stripe (one-time checkout)
 - **Database:** PostgreSQL + Prisma
 - **SEO:** Structured data (JSON-LD), OpenGraph, Twitter Cards
 
@@ -31,8 +29,7 @@ A Next.js web application for creating beautiful QR code wallpapers optimized fo
 
 - Node.js 18+ installed
 - PostgreSQL database
-- Clerk account (for authentication)
-- Stripe account (for payments)
+- Stripe account (for one-time download payments)
 
 ### Installation
 
@@ -60,9 +57,8 @@ Then fill in all required values. See [ENV_SETUP.md](ENV_SETUP.md) for detailed 
 
 **Required variables:**
 - `DATABASE_URL` - PostgreSQL connection string
-- `NEXT_PUBLIC_CLERK_*` - Clerk authentication keys
-- `STRIPE_*` - Stripe payment keys
-- `NEXT_PUBLIC_BASE_URL` - Your site URL (for SEO)
+- `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_PRICE_DOWNLOAD`, `STRIPE_WEBHOOK_SECRET` - Stripe (see [ENV_SETUP.md](ENV_SETUP.md))
+- `NEXT_PUBLIC_BASE_URL` - Your site URL (optional; has fallbacks)
 - `NEXT_PUBLIC_GA_ID` - Google Analytics ID (optional)
 
 4. **Set up the database**
@@ -85,27 +81,26 @@ src/
 ├── app/                    # Next.js app router
 │   ├── api/               # API routes
 │   ├── create/            # Wallpaper creator page
-│   ├── dashboard/         # User dashboard
-│   ├── privacy/           # Privacy policy
-│   ├── terms/             # Terms of service
-│   ├── subscribe/         # Subscription page
-│   ├── layout.tsx         # Root layout with metadata
+│   ├── download/           # Post-payment download page
+│   ├── privacy/            # Privacy policy
+│   ├── terms/              # Terms of service
+│   ├── cookies/            # Cookie policy
+│   ├── layout.tsx          # Root layout with metadata
 │   ├── page.tsx           # Landing page
 │   ├── robots.ts          # SEO robots.txt
 │   └── sitemap.ts         # SEO sitemap
 ├── components/            # React components
-│   ├── Dashboard/         # Dashboard components
 │   ├── LandingPage/       # Landing page components
 │   ├── Preview/           # Wallpaper preview
 │   ├── Sidebar/           # Creator sidebar
 │   └── ui/                # Reusable UI components
 ├── lib/                   # Utilities and helpers
 │   ├── db.ts             # Database client
-│   ├── design.ts         # Design operations
+│   ├── env.ts             # Environment validation
 │   ├── export.ts         # Export functionality
 │   ├── qr.ts             # QR code generation
-│   ├── stripe.ts         # Stripe integration
-│   └── subscription.ts   # Subscription logic
+│   ├── rate-limit.ts     # Rate limiting (checkout)
+│   └── stripe.ts         # Stripe integration
 └── data/                  # Static data
     ├── devices.json       # Device specifications
     ├── gradients.ts       # Gradient presets
@@ -197,8 +192,7 @@ npx prisma migrate dev --name migration_name
 **Important:** Update these in production:
 - `NEXT_PUBLIC_BASE_URL` → your production domain
 - Use Stripe **live** keys (not test keys)
-- Use Clerk **production** keys
-- Update webhook endpoints to production URLs
+- Update Stripe webhook endpoint to production URL
 
 ### Environment Variables for Production
 
@@ -208,11 +202,10 @@ See [ENV_SETUP.md](ENV_SETUP.md) for the complete list of environment variables 
 
 After deployment:
 
-1. **Google Analytics** - Track user behavior
+1. **Google Analytics** - Track user behavior (optional)
 2. **Google Search Console** - Monitor search performance
 3. **Bing Webmaster Tools** - Bing search visibility
-4. **Stripe Dashboard** - Monitor subscriptions and revenue
-5. **Clerk Dashboard** - Monitor user signups and authentication
+4. **Stripe Dashboard** - Monitor payments and webhooks
 
 ## 📝 Available Scripts
 

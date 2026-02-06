@@ -28,7 +28,7 @@ Added comprehensive security headers to all routes:
 - **Permissions-Policy:** Restricts camera, microphone, and geolocation access
 - **Content-Security-Policy (CSP):** Comprehensive policy that:
   - Restricts script sources to trusted domains
-  - Allows Google Analytics and Clerk authentication
+  - Allows Google Analytics
   - Enables Stripe checkout iframes
   - Blocks unsafe inline scripts (where possible)
   - Enforces HTTPS upgrade for all requests
@@ -79,7 +79,6 @@ Created startup validation that checks all required environment variables:
 
 #### Validated Variables
 - Database connection string (format validation)
-- Clerk authentication keys (format validation)
 - Stripe payment keys (format validation)
 - Base URL (format validation)
 - Webhook secrets (presence validation)
@@ -207,7 +206,7 @@ These were already correctly implemented and didn't need changes:
 
 ✅ **Webhook Signature Verification**
 - Stripe webhooks verify signatures
-- Clerk webhooks verify signatures
+- Stripe webhooks verify signatures
 
 ✅ **SQL Injection Protection**
 - Using Prisma ORM with parameterized queries
@@ -218,7 +217,7 @@ These were already correctly implemented and didn't need changes:
 - No dangerouslySetInnerHTML usage
 
 ✅ **Authentication**
-- Clerk handles session management
+- Stripe handles payment verification
 - Middleware protects all non-public routes
 - Secure cookie settings
 
@@ -270,7 +269,7 @@ These were already correctly implemented and didn't need changes:
 
 Use the `PRODUCTION_CHECKLIST.md` to:
 
-1. Switch to production API keys (Clerk, Stripe)
+1. Switch to production API keys (Stripe)
 2. Configure production webhooks
 3. Set up production database
 4. Configure domain and DNS

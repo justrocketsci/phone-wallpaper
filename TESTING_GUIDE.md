@@ -1,280 +1,141 @@
-# Testing Guide (No Webhooks Required!)
+# Testing Guide
 
-This guide shows you how to test the full authentication and payment flow **without setting up webhooks** during development.
-
-## What Changed?
-
-The app now automatically creates users in the database **on-demand** when they:
-- Visit the `/create` page
-- Click "Subscribe"
-- Try to export a wallpaper
-
-**No Clerk webhook needed!** Users are synced from Clerk to Neon automatically.
+How to test the QR Canvas payment and download flow locally and in production.
 
 ---
 
-## Quick Start Testing
+## Quick Start
 
-### 1. Set Up Your `.env.local`
+### 1. Set Up `.env.local`
 
-Create `.env.local` in the project root with the **minimum required** environment variables:
+Create `.env.local` in the project root with:
 
 ```bash
-# Clerk (REQUIRED - get from clerk.com dashboard)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
-CLERK_SECRET_KEY=sk_test_xxxxx
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
-
-# Database (REQUIRED - get from neon.tech)
+# Database (REQUIRED)
 DATABASE_URL=postgresql://xxxxx
 
-# Stripe (REQUIRED - get from stripe.com dashboard)
+# Stripe (REQUIRED - from stripe.com dashboard)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxx
 STRIPE_SECRET_KEY=sk_test_xxxxx
-STRIPE_PRICE_ID=price_xxxxx
+STRIPE_PRICE_DOWNLOAD=price_xxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 
-# App URL
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# ⚠️ SKIP THESE FOR NOW (not needed for local testing)
-# CLERK_WEBHOOK_SECRET=     <- Skip this!
-# STRIPE_WEBHOOK_SECRET=    <- We'll add this when deploying
+# App URL (optional)
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
----
+See [ENV_SETUP.md](ENV_SETUP.md) for details.
 
-### 2. Initialize Database
+### 2. Database & Dev Server
 
 ```bash
-# Generate Prisma client
 npx prisma generate
-
-# Push schema to Neon
 npx prisma db push
-```
-
----
-
-### 3. Start Development Server
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Testing the Flow (Step-by-Step)
+## Testing the Download Flow
 
-### Test 1: User Authentication ✅
+### Test 1: Create → Pay → Download
 
-1. Go to `http://localhost:3000`
-2. Click **"Get Started"** or **"Sign Up"**
-3. Create a test account with Clerk
-4. You should be redirected to `/subscribe`
-
-**What happens behind the scenes:**
-- ✅ Clerk creates user account
-- ✅ App redirects to subscribe page
-- ✅ User record **automatically created** in Neon database
-
-**Verify in database:**
-```bash
-npx prisma studio
-```
-- Open the `User` table
-- You should see your test user!
-
----
-
-### Test 2: Subscription Flow ✅
-
-1. On `/subscribe` page, click **"Subscribe Now"**
-2. You'll be redirected to Stripe checkout
-3. Use test card: `4242 4242 4242 4242`
-4. Complete checkout
-5. You'll be redirected to success page
-6. **Success page will automatically activate your subscription!**
+1. Go to `http://localhost:3000` and click **Get Started** (or open `/create`).
+2. **Design a wallpaper:**
+   - Step 1: Choose a device (e.g. iPhone 15 Pro).
+   - Step 2: Choose a gradient.
+   - Step 3: Add at least one QR code (URL + label).
+3. Click **Download PNG — $1.99**.
+4. You are redirected to Stripe Checkout. Use test card:
+   - Card: `4242 4242 4242 4242`
+   - Expiry: any future date (e.g. 12/34)
+   - CVC: any 3 digits
+   - ZIP: any 5 digits
+5. After payment, you are redirected to `/download?session_id=...`.
+6. The app verifies the session, restores your design from localStorage, generates the PNG, and downloads it.
+7. You should see "Download Complete!" and the file in your downloads folder.
 
 **What happens:**
-- ✅ Stripe creates subscription
-- ✅ You're redirected to `/subscribe/success`
-- ✅ Success page fetches session from Stripe
-- ✅ **User is automatically marked as subscribed** (no manual work needed!)
-- ✅ You can immediately start creating wallpapers
+- Design state is saved to localStorage before redirecting to Stripe.
+- Stripe webhook `checkout.session.completed` creates a `Purchase` record (when webhook is configured).
+- `/api/verify-download` checks the session is paid and allows one download per purchase; it creates/updates `Purchase` and marks `downloaded: true`.
+- Client restores state, runs `exportWallpaperAsPNG()`, then clears localStorage.
 
-**Note:** This uses a session verification endpoint instead of webhooks, so it works locally without ngrok!
+### Test 2: Same Session Used Twice (Should Fail)
 
----
+1. After a successful download, copy the `/download` URL (including `session_id=...`).
+2. Open it in the same or a new tab (or clear localStorage and reopen).
+3. The verify API should still return success, but if you no longer have the design in localStorage you get the error: "Could not restore your wallpaper design..."
+4. If you still have the design in localStorage (e.g. same browser, no clear), the PNG is generated again. The backend allows one "download" per purchase in the sense that the session is verified once per redemption; the actual one-time enforcement is that after the first successful verify+export, the user typically leaves the page and state is cleared.
 
-### Test 3: Alternative - Manual Subscription Activation (Optional)
+**Note:** Each Stripe checkout session is intended for one download. The app records `downloaded` on the `Purchase` row; verify-download checks this and rejects if the purchase was already used. See `src/app/api/verify-download/route.ts`.
 
-If the automatic activation fails, you can manually activate:
+### Test 3: No Session / Invalid Session
 
-```bash
-# Open Prisma Studio
-npx prisma studio
-```
-
-1. Click on **User** table
-2. Find your test user
-3. Edit the record:
-   - `subscriptionStatus` → `"active"`
-   - `stripeCustomerId` → Copy from Stripe dashboard
-4. Save
+1. Open `/download` without a `session_id` query param.
+   - You should see an error: "No session ID provided" or similar.
+2. Open `/download?session_id=invalid`.
+   - You should see a verification error (e.g. "Invalid session" or "Verification failed").
 
 ---
 
-### Test 4: Protected Routes & Export ✅
+## Testing With Stripe Webhooks (Recommended for Full Flow)
 
-1. Go to `/create`
-2. You should now have access (subscribed user)
-3. Design a wallpaper:
-   - Choose device
-   - Choose gradient
-   - Add QR code
-4. Click **"Download Wallpaper"**
-5. Wallpaper should download! 🎉
+For the backend to record purchases (and refunds) automatically:
 
-**What happens:**
-- ✅ App checks subscription status in database
-- ✅ User is marked as "active"
-- ✅ Export is allowed
+1. **Local:** Use [ngrok](https://ngrok.com): `ngrok http 3000`, then in Stripe Dashboard add webhook endpoint `https://YOUR_NGROK_URL/api/webhooks/stripe` with events `checkout.session.completed` and `charge.refunded`. Put the signing secret in `STRIPE_WEBHOOK_SECRET`.
+2. **Production:** Add webhook `https://your-domain.com/api/webhooks/stripe` with the same events and set `STRIPE_WEBHOOK_SECRET` in your hosting env.
+
+Then run the flow again; in Prisma Studio you should see a `Purchase` row after checkout.
 
 ---
 
-### Test 5: Non-Subscribed User Flow ✅
+## What You Can Test Locally
 
-1. Open **Prisma Studio** again
-2. Change `subscriptionStatus` to `null` or `"canceled"`
-3. Refresh `/create` page
-4. You should be redirected to `/subscribe`
-
-**Or create a second test user:**
-1. Sign out
-2. Create new account
-3. Go to `/create`
-4. You'll be redirected to `/subscribe` (not subscribed yet)
+- Landing page, navigation, pricing, FAQ.
+- Create page: device, gradient, QR blocks, templates (`?template=...`).
+- Export bar: disabled until device + gradient + at least one QR.
+- Checkout: redirect to Stripe, pay with test card, redirect back to `/download`.
+- Verify-download: success path and error messages when session is missing/invalid or design not in localStorage.
+- Refunds: in Stripe Dashboard refund a payment; webhook should set `Purchase.status` to `refunded`; verify-download for that session should then reject.
 
 ---
 
-## What You CAN Test Locally
+## Common Issues
 
-✅ **User signup & authentication**  
-✅ **Auto-creation of users in database**  
-✅ **Subscription page UI**  
-✅ **Stripe checkout flow**  
-✅ **Automatic subscription activation** (via success page!)  
-✅ **Protected routes**  
-✅ **Export functionality**  
-✅ **Customer portal**  
-✅ **Complete end-to-end flow**
+### "Could not restore your wallpaper design..."
+- Design state is stored in localStorage only until the download completes. If you used a different browser, cleared storage, or opened the success URL in a new session without going through the same create flow, state is gone. Create the wallpaper again and complete payment in the same browser session.
 
----
+### "This download has already been used"
+- The backend allows one download per Stripe session. Each new download requires a new purchase (new checkout session).
 
-## What You CANNOT Test Without Webhooks
+### "Stripe price not configured"
+- Set `STRIPE_PRICE_DOWNLOAD` in `.env.local` to your Stripe price ID (one-time price for the download).
 
-❌ **Subscription status updates** (renewals, cancellations)  
-❌ **Past due / failed payment handling**  
-❌ **Subscription events** (invoice.paid, subscription.updated, etc.)
+### "Verification failed" / "Invalid session"
+- Check that `session_id` is the full Stripe Checkout Session ID.
+- Ensure you use Stripe test keys and a session from test mode.
+- If you use webhooks, ensure `STRIPE_WEBHOOK_SECRET` matches the endpoint and that the webhook is receiving events (Stripe Dashboard > Webhooks).
 
-**These require Stripe webhooks, which you'll add when:**
-- Deploying to production (recommended)
-- Or using ngrok/cloudflare tunnel for local testing
-
----
-
-## Recommended Testing Strategy
-
-### Phase 1: Local Testing (Now)
-- ✅ Test authentication
-- ✅ Test UI/UX
-- ✅ Test export with manual subscription
-- ✅ Test protected routes
-- ⚠️ Skip automatic webhooks
-
-### Phase 2: Deploy to Production
-- Deploy to Vercel/Netlify/Railway
-- Set up Stripe webhook with production URL
-- Test real subscription flow end-to-end
-
----
-
-## Common Issues & Solutions
-
-### "User not found" Error
-**Problem:** User signed up but not in database  
-**Solution:** Go to `/create` page - user will be auto-created
-
-### "Subscribe to Export" Button Shows
-**Problem:** User not marked as subscribed  
-**Solution:** Manually set `subscriptionStatus = "active"` in Prisma Studio
-
-### Stripe Checkout Works But Nothing Happens
-**Problem:** Webhook not configured  
-**Solution:** Normal! Manually activate user in database for testing
-
-### Database Connection Error
-**Problem:** `DATABASE_URL` not set or incorrect  
-**Solution:** Check `.env.local` and Neon dashboard
-
-### Clerk Authentication Not Working
-**Problem:** API keys missing or incorrect  
-**Solution:** Verify `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
-
----
-
-## When to Add Webhooks
-
-**Add webhooks when you:**
-- Deploy to production
-- Want to test real payment flows
-- Need automatic subscription updates
-
-**For now, you can skip them and test 90% of functionality!**
-
----
-
-## Next Steps
-
-1. ✅ Test user signup
-2. ✅ Verify user created in Neon
-3. ✅ Test Stripe checkout UI
-4. ✅ Manually activate subscription
-5. ✅ Test wallpaper export
-6. 🚀 Deploy when ready
-7. 🔗 Add webhooks in production
+### Rate limit (429) on checkout
+- Checkout is rate limited by IP (e.g. 10/hour when Redis is configured). If Redis is not set, rate limiting is disabled. For local testing you can use a new incognito window or different IP if you hit the limit.
 
 ---
 
 ## Useful Commands
 
 ```bash
-# View database
-npx prisma studio
-
-# Reset database (careful!)
-npx prisma db push --force-reset
-
-# Check database schema
-npx prisma db pull
-
-# Generate Prisma client (after schema changes)
-npx prisma generate
+npx prisma studio   # Inspect Purchase and other tables
+npx prisma generate # After schema changes
+npx prisma db push  # Sync schema to DB
 ```
 
 ---
 
 ## Need Help?
 
-- **Clerk Issues**: [docs.clerk.com](https://docs.clerk.com)
-- **Stripe Issues**: [stripe.com/docs](https://stripe.com/docs)
-- **Neon Issues**: [neon.tech/docs](https://neon.tech/docs)
-- **Prisma Issues**: [prisma.io/docs](https://prisma.io/docs)
-
-Happy testing! 🎉
-
+- [ENV_SETUP.md](ENV_SETUP.md) - Environment variables
+- [SETUP.md](SETUP.md) - Database and Stripe setup
+- [Stripe Testing](https://stripe.com/docs/testing)

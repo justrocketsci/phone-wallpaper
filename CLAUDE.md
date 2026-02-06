@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-QR Canvas is a Next.js 15 web application for creating QR code wallpapers optimized for phone lock screens. Users can select a device, choose a gradient background, add up to 2 QR codes with brand icons, and export at device resolution.
+QR Canvas is a Next.js 15 web application for creating QR code wallpapers optimized for phone lock screens. Users can select a device, choose a gradient background, add up to 2 QR codes with brand icons, and export at device resolution. Export is gated by a one-time Stripe payment per download.
 
 ## Commands
 
@@ -23,8 +23,7 @@ npx prisma studio    # Open Prisma database GUI
 - **Framework**: Next.js 15 with App Router, TypeScript
 - **Styling**: Tailwind CSS
 - **State**: Zustand store (`src/lib/store.ts`)
-- **Auth**: Clerk (`@clerk/nextjs`)
-- **Payments**: Stripe (subscriptions)
+- **Payments**: Stripe (one-time payment per download)
 - **Database**: PostgreSQL via Prisma
 - **QR Generation**: `qrcode` library
 
@@ -34,30 +33,24 @@ npx prisma studio    # Open Prisma database GUI
 - Central Zustand store for wallpaper state (device, gradient, qrBlocks, typography)
 - `getSerializableState()` returns JSON-safe state for saving designs
 - `loadFromDesign()` hydrates store from saved design
+- `savePendingDownload()` / `loadPendingDownload()` / `clearPendingDownload()` persist state across checkout for post-payment download
 
 **Export System** - `src/lib/export.ts`
 - `exportWallpaperAsPNG()` renders wallpaper to canvas at device resolution
 - Handles QR code positioning, gradient rendering, and icon SVGs
-- Uses device `systemUI` data for smart vertical positioning
+- Uses device `systemUI` data for smart vertical positioning (single QR centered between clock and widgets)
 
-**Authentication Flow** - `src/middleware.ts`
-- Public routes: `/`, `/sign-in`, `/sign-up`, `/api/webhooks`, `/privacy`, `/terms`, `/cookies`, `/subscribe`
-- Protected routes require Clerk auth via `auth.protect()`
-
-**Subscription Logic** - `src/lib/subscription.ts`
-- `getUserSubscription()` checks Stripe subscription status
-- Active statuses: `active`, `trialing`
+**Environment** - `src/lib/env.ts`
+- `validateEnv()` validates required and runtime-only env vars at startup
+- Required: `DATABASE_URL`, `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- Runtime-only: `STRIPE_PRICE_DOWNLOAD`, `STRIPE_WEBHOOK_SECRET`
 
 ### Data Models
 
-**User** (Prisma)
-- Links Clerk auth (`clerkId`) to Stripe (`stripeCustomerId`, `stripeSubscriptionId`)
-- Stores subscription status and end date
-
-**Design** (Prisma)
-- User's saved wallpaper designs
-- `settings` JSON field stores full `SerializableState`
-- Optional `thumbnail` for dashboard grid
+**Purchase** (Prisma)
+- One record per Stripe checkout session (`stripeSessionId`)
+- Tracks `amountPaid`, `email`, `downloaded`, `downloadedAt`, `status` (e.g. `completed`, `refunded`)
+- One download per purchase; reuse of same session is blocked after first download
 
 ### Component Hierarchy
 
@@ -73,12 +66,9 @@ WallpaperCreator (main orchestrator)
 
 ### API Routes
 
-- `/api/designs` - CRUD for saved designs (GET list, POST create)
-- `/api/designs/[id]` - GET/PATCH/DELETE individual design
-- `/api/create-checkout-session` - Stripe checkout
-- `/api/create-portal-session` - Stripe customer portal
-- `/api/webhooks/stripe` - Stripe webhook handler
-- `/api/webhooks/clerk` - Clerk webhook handler
+- `/api/create-checkout-session` - Creates Stripe Checkout session (rate limited by IP)
+- `/api/verify-download` - Verifies payment and allows one-time download
+- `/api/webhooks/stripe` - Stripe webhook (checkout.session.completed, charge.refunded)
 
 ### Static Data
 
@@ -91,7 +81,9 @@ WallpaperCreator (main orchestrator)
 
 Required in `.env.local`:
 - `DATABASE_URL` - PostgreSQL connection string
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`
-- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_PRICE_ID` - Subscription product price
-- `NEXT_PUBLIC_BASE_URL` - Site URL for SEO/webhooks
+- `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_PRICE_DOWNLOAD` - Stripe price ID for one-time download (runtime)
+- `STRIPE_WEBHOOK_SECRET` - Stripe webhook signing secret (runtime)
+- `NEXT_PUBLIC_BASE_URL` - Site URL for SEO/webhooks (optional; has fallbacks)
+
+See `ENV_SETUP.md` for full configuration.

@@ -7,8 +7,8 @@
 ## What's Already Done ✅
 
 The Privacy Policy and Terms of Service include:
-- ✅ Accurate tech stack (Clerk, Stripe, PostgreSQL)
-- ✅ Real subscription details ($3.95/month)
+- ✅ Accurate tech stack (Stripe, PostgreSQL)
+- ✅ Real payment details (one-time download, e.g. $1.99)
 - ✅ Actual features (QR codes, wallpaper creation)
 - ✅ GDPR/CCPA compliant structure
 - ✅ Industry-standard SaaS legal language
@@ -83,7 +83,6 @@ personal data within 30 days"
 
 #### Section: Third-Party Services
 **Verify accuracy:**
-- [ ] Clerk privacy policy URL is current
 - [ ] Stripe privacy policy URL is current
 - [ ] Google Analytics mentioned (if you're using it)
 - [ ] Any other third-party services you use are listed
@@ -177,7 +176,6 @@ with the laws of [YOUR STATE], United States"
   - [ ] Do you need age verification?
   - [ ] International data transfer agreements?
   - [ ] Stripe's legal requirements met?
-  - [ ] Clerk's legal requirements met?
 
 ---
 

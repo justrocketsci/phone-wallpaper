@@ -10,11 +10,12 @@ const requiredEnvVars = {
   // Stripe Payments
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-  STRIPE_PRICE_DOWNLOAD: process.env.STRIPE_PRICE_DOWNLOAD,
 } as const
 
 // Runtime-only variables (not needed during build)
 const runtimeOnlyEnvVars = {
+  // Stripe price (only needed at runtime for checkout API route)
+  STRIPE_PRICE_DOWNLOAD: process.env.STRIPE_PRICE_DOWNLOAD,
   // Webhook secrets (only needed at runtime for API routes)
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
 } as const
@@ -55,9 +56,6 @@ export function validateEnv(): void {
       if (key === 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY' && !value.startsWith('pk_')) {
         invalid.push({ key, reason: 'must be a valid Stripe publishable key (starts with pk_)' })
       }
-      if (key === 'STRIPE_PRICE_DOWNLOAD' && !value.startsWith('price_')) {
-        invalid.push({ key, reason: 'must be a valid Stripe price ID (starts with price_)' })
-      }
     }
   }
 
@@ -68,6 +66,9 @@ export function validateEnv(): void {
         missing.push(key)
       } else {
         // Additional validation
+        if (key === 'STRIPE_PRICE_DOWNLOAD' && !value.startsWith('price_')) {
+          invalid.push({ key, reason: 'must be a valid Stripe price ID (starts with price_)' })
+        }
         if (key === 'STRIPE_WEBHOOK_SECRET' && !value.startsWith('whsec_')) {
           invalid.push({ key, reason: 'must be a valid Stripe webhook secret (starts with whsec_)' })
         }

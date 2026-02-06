@@ -31,9 +31,6 @@
 .env.production.local
 !.env.example
 
-# clerk configuration (can include secrets)
-/.clerk/
-
 # stripe
 .stripe/
 

@@ -104,25 +104,26 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const GA_ID = process.env.NEXT_PUBLIC_GA_ID
+  const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID
+  const gtagId = GA_ID || GOOGLE_ADS_ID
 
   return (
     <html lang="en">
         <body className={`${inter.variable} ${manrope.variable} ${outfit.variable} ${sora.variable} ${jetbrainsMono.variable} font-inter antialiased`}>
-          {/* Google Analytics */}
-          {GA_ID && (
+          {/* Google Analytics & Google Ads */}
+          {gtagId && (
             <>
               <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+                src={`https://www.googletagmanager.com/gtag/js?id=${gtagId}`}
                 strategy="afterInteractive"
               />
-              <Script id="google-analytics" strategy="afterInteractive">
+              <Script id="google-gtag" strategy="afterInteractive">
                 {`
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '${GA_ID}', {
-                    page_path: window.location.pathname,
-                  });
+                  ${GA_ID ? `gtag('config', '${GA_ID}', { page_path: window.location.pathname });` : ''}
+                  ${GOOGLE_ADS_ID ? `gtag('config', '${GOOGLE_ADS_ID}');` : ''}
                 `}
               </Script>
             </>

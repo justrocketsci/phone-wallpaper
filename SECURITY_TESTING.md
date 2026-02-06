@@ -1,191 +1,68 @@
 # Security Testing Documentation
 
-## IDOR (Insecure Direct Object Reference) Protection
-
-### Implementation Review
-
-All design API endpoints implement proper IDOR protection by verifying ownership before operations:
-
-#### GET /api/designs/[id]
-**Location:** `src/app/api/designs/[id]/route.ts` (lines 43-48)
-
-```typescript
-const design = await prisma.design.findFirst({
-  where: {
-    id,
-    userId: user.id, // ✅ Ownership check
-  },
-})
-```
-
-**Protection:** Users can only fetch their own designs.
-
-#### PATCH /api/designs/[id]
-**Location:** `src/app/api/designs/[id]/route.ts` (lines 103-109)
-
-```typescript
-const existingDesign = await prisma.design.findFirst({
-  where: {
-    id,
-    userId: user.id, // ✅ Ownership check
-  },
-})
-```
-
-**Protection:** Users can only update their own designs.
-
-#### DELETE /api/designs/[id]
-**Location:** `src/app/api/designs/[id]/route.ts` (lines 176-182)
-
-```typescript
-const existingDesign = await prisma.design.findFirst({
-  where: {
-    id,
-    userId: user.id, // ✅ Ownership check
-  },
-})
-```
-
-**Protection:** Users can only delete their own designs.
-
-#### GET /api/designs
-**Location:** `src/app/api/designs/route.ts` (lines 39-41)
-
-```typescript
-const designs = await prisma.design.findMany({
-  where: { userId: user.id }, // ✅ Ownership check
-  orderBy: { updatedAt: 'desc' },
-})
-```
-
-**Protection:** Users only see their own designs.
-
-### Manual Testing Checklist
-
-To verify IDOR protection in production:
-
-1. **Setup:**
-   - [ ] Create two user accounts (UserA and UserB)
-   - [ ] Create at least one design for each user
-   - [ ] Note the design IDs for both users
-
-2. **Test GET /api/designs/[id]:**
-   - [ ] Log in as UserA
-   - [ ] Try to access UserB's design using GET /api/designs/{userB_design_id}
-   - [ ] Expected: 404 Not Found or unauthorized error
-   - [ ] Verify: Cannot see UserB's design
-
-3. **Test PATCH /api/designs/[id]:**
-   - [ ] Log in as UserA
-   - [ ] Try to update UserB's design using PATCH /api/designs/{userB_design_id}
-   - [ ] Expected: 404 Not Found
-   - [ ] Verify: UserB's design remains unchanged
-
-4. **Test DELETE /api/designs/[id]:**
-   - [ ] Log in as UserA
-   - [ ] Try to delete UserB's design using DELETE /api/designs/{userB_design_id}
-   - [ ] Expected: 404 Not Found
-   - [ ] Verify: UserB's design still exists
-
-5. **Test GET /api/designs:**
-   - [ ] Log in as UserA
-   - [ ] Fetch all designs
-   - [ ] Verify: Only UserA's designs are returned, no UserB designs
-
-### Database-Level Protection
-
-The Prisma schema includes cascading deletes to maintain data integrity:
-
-```prisma
-model Design {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([userId])
-}
-```
-
-**Protection:** If a user is deleted, all their designs are automatically deleted (no orphaned data).
-
-### Authentication Layer
-
-All design endpoints are protected by Clerk authentication via middleware:
-
-**Location:** `src/middleware.ts`
-
-```typescript
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/api/webhooks(.*)',
-  '/privacy',
-  '/terms',
-  '/subscribe',
-])
-
-export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect()
-  }
-})
-```
-
-**Protection:** Unauthenticated users cannot access `/api/designs/*` endpoints at all.
-
-### Testing Results
-
-✅ **IDOR Protection Status:** IMPLEMENTED AND VERIFIED
-
-All design endpoints properly validate ownership before performing operations. The combination of:
-1. Clerk authentication middleware
-2. User lookup via Clerk ID
-3. Ownership validation in database queries
-4. Indexed userId field for performance
-
-...provides comprehensive protection against IDOR vulnerabilities.
-
-### Recommendations
-
-- ✅ All critical endpoints protected
-- ✅ Database queries include ownership checks
-- ✅ Returns 404 instead of 403 (doesn't leak existence of other designs)
-- ✅ Indexed queries for performance
-
-**No additional changes needed.**
+This document describes security-relevant behavior in the current QR Canvas application (no user authentication; one-time Stripe payment per download).
 
 ---
 
-## Additional Security Tests
+## Payment & Download Flow
 
-### XSS Protection
+### Checkout Session Creation (POST /api/create-checkout-session)
 
-**Status:** ✅ Protected by React
+- **Rate limiting:** Checkout is rate limited by IP (e.g. 10 requests per hour when Upstash Redis is configured). See `src/lib/rate-limit.ts`.
+- **No auth:** Anyone can request a checkout session; payment is the gate.
+- **Validation:** Uses `STRIPE_PRICE_DOWNLOAD`; no user-supplied price or product.
 
-React automatically escapes all content rendered in JSX. User-generated content (design names, labels) are safe from XSS.
+**Manual test:**
+- [ ] From `/create`, complete design and click Download → redirects to Stripe Checkout.
+- [ ] Without Redis, multiple checkout requests succeed; with Redis, verify 429 after limit.
 
-**Manual Test:**
-- [ ] Create a design with name: `<script>alert('xss')</script>`
-- [ ] Verify: Script is rendered as text, not executed
+### Verify Download (GET /api/verify-download)
 
-### SQL Injection Protection
+- **Input:** `session_id` query parameter (Stripe Checkout Session ID).
+- **Checks:** Session exists, `payment_status === 'paid'`, purchase not already used (`downloaded`), purchase not `refunded`.
+- **Idempotency:** First successful verify creates/updates `Purchase` and marks `downloaded: true`; subsequent calls for same session return 403 ("This download has already been used") when applicable.
 
-**Status:** ✅ Protected by Prisma ORM
+**Manual tests:**
+- [ ] Complete payment, land on `/download?session_id=...` → 200 and PNG download.
+- [ ] Call verify-download again with same `session_id` (e.g. reload `/download`) → 403 or success depending on implementation (one download per purchase).
+- [ ] Call with invalid or missing `session_id` → 400/402/500 as appropriate.
+- [ ] After refunding in Stripe, call verify-download with that session → 403 ("This purchase has been refunded").
 
-All database queries use Prisma ORM with parameterized queries.
+### Stripe Webhook (POST /api/webhooks/stripe)
 
-**Verification:** No raw SQL queries in codebase.
+- **Verification:** Request body is verified with `STRIPE_WEBHOOK_SECRET` (signature check). Invalid signature → 400.
+- **Events:** `checkout.session.completed` (create `Purchase`), `charge.refunded` (set `Purchase.status = 'refunded'`).
+- **Idempotency:** Duplicate `checkout.session.completed` does not create a second `Purchase` (unique on `stripeSessionId`).
 
-### CSRF Protection
+**Manual test (with ngrok or production URL):**
+- [ ] Trigger a test payment; confirm `Purchase` row in DB.
+- [ ] Trigger a refund in Stripe Dashboard; confirm `Purchase.status` is `refunded`.
 
-**Status:** ✅ Protected by Clerk
+---
 
-Clerk's authentication includes CSRF protection for authenticated sessions.
+## General Protections
 
-### Rate Limiting
+### XSS
 
-**Status:** ⚠️ To be implemented (see TODO)
+- **Status:** ✅ Mitigated by React (escaping in JSX). User content (e.g. QR labels) is not rendered as raw HTML.
 
-Need to add rate limiting to prevent abuse of API endpoints.
+### SQL Injection
 
+- **Status:** ✅ All DB access via Prisma (parameterized). No raw SQL in app code.
+
+### Environment & Secrets
+
+- **Status:** ✅ `src/lib/env.ts` validates required env vars at startup. No Clerk; Stripe keys and webhook secret are required at runtime where used. See [ENV_SETUP.md](ENV_SETUP.md).
+
+### Security Headers
+
+- **Status:** ✅ Configured in `next.config.js` (CSP, X-Frame-Options, etc.). See [SECURITY_IMPROVEMENTS.md](SECURITY_IMPROVEMENTS.md).
+
+---
+
+## Recommendations
+
+- Keep Stripe webhook signature verification enabled; never skip it.
+- In production, use Upstash Redis for checkout rate limiting so limits apply across instances.
+- Do not commit `.env.local`; set all secrets in the hosting platform.
+- Use Stripe test keys in development and live keys only in production.
