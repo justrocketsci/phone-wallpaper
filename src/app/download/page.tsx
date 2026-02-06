@@ -61,6 +61,15 @@ function DownloadContent() {
         // Clean up localStorage
         clearPendingDownload()
         setStatus('success')
+
+        // Fire Google Ads conversion event
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'conversion', {
+            'send_to': 'AW-10983483990/OuVkCK3VosAbENbUqvUo',
+            'value': 1.99,
+            'currency': 'USD',
+          })
+        }
       } catch (error: any) {
         console.error('Download failed:', error)
         setStatus('error')
